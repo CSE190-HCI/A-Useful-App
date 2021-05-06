@@ -1,26 +1,17 @@
-import './App.css';
-import Dancebility from './components/Dancebility';
+import "./App.css";
+import feature from "./components/FeatureCard.js";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-      <Dancebility />
-        {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div className="App">
+            <header className="App-header">
+                <p>Web Name</p>
+                {/* <feature feature="Danceability" />
+                <feature feature="Valence" /> */}
+            </header>
+            <feature />
+        </div>
+    );
 }
 
 export default App;
