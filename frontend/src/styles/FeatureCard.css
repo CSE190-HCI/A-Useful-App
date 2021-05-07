@@ -1,7 +1,63 @@
+/* 
+Notes:  - The container width is sized by .text-field.
+        - When you change the margin for .text-field, make sure
+          to change .song (and possibly .song p)'s margin as well.
+        - .container does not have padding because it will affect
+          the header width, which won't fully span across. 
+*/
+
+/* Main feature card */
+
 .container {
-    border-radius: 10;
+    border-radius: 10px;
     display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: rgb(228, 228, 228);
+    margin: 10px;
 }
 
+/* Feature header */
+
+.header {
+    border-radius: 10px 10px 0px 0px;
+    background-color:blueviolet;
+    height: 30%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 10px;
+}
+
+.header p {
+    margin: 0;
+    font-size: large;
+    color: white;
+}
+
+/* Song text label */
+
+.song {
+    display: flex;
+    justify-content: left;
+    margin-left: 15px;
+}
+
+.song p {
+    font-size: medium;
+    font-weight: bold;
+    color: darkslategray;
+    margin: 15px 0px 0px 0px;
+}
+
+/* Input text field */
+
 .text-field {
+    height: 30px;
+    border-width: 0px 0px 2px 0px;
+    padding: 0px;
+    background-color: transparent;
+    outline: none;
+    margin: 15px 15px 20px 15px;
+    width: 25vw;
 }

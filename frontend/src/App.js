@@ -1,13 +1,14 @@
 import "./App.css";
-import feature from "./components/FeatureCard.js";
+import FeatureCard from "./components/FeatureCard";
 
 function App() {
     return (
         <div className="App">
             <header className="App-header">
                 <p>Web Name</p>
-                {/* <feature feature="Danceability" />
-                <feature feature="Valence" /> */}
+                <FeatureCard feature="Danceability"/>
+                <FeatureCard feature="Valence"/>
+                <FeatureCard feature="Tempo"/>
             </header>
             <feature />
         </div>
