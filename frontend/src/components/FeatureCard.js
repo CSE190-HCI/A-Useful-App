@@ -2,14 +2,19 @@ import React from "react";
 import "../styles/FeatureCard.css";
 
 class FeatureCard extends React.Component{
-    handleChange = (e) => {
-        let isCheck = e.target.checked;
-    }
-    
-    render(){
+    constructor(props) {
+        super(props);
+        
         this.state = {
             isCheck : false
         };
+    }
+
+    handleChange = (e) => {
+        this.setState({ ...this.state, isCheck: e.target.checked });
+    }
+    
+    render(){
 
         return(
             <div className="container">
