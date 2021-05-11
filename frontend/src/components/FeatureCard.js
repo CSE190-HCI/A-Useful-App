@@ -1,54 +1,49 @@
 import React from "react";
-// import { render } from "react-dom";
-// import Checkbox from "./Checkbox.js";
 import "../styles/FeatureCard.css";
 
-// export default class feature extends React.Component {
-//     state = { checked: false };
+class FeatureCard extends React.Component{
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            isCheck : false
+        };
+    }
 
-//     handleCheckboxChange = (event) => {
-//         this.setState({ checked: event.target.checked });
-//     };
-//     render() {
-//         return (
-//             <div style={{ fontFamily: "system-ui" }}>
-//                 <label>
-//                     <Checkbox
-//                         checked={this.state.checked}
-//                         onChange={this.handleCheckboxChange}
-//                     />
-//                     <span style={{ marginLeft: 8 }}>Label Text</span>
-//                 </label>
-//             </div>
-//         );
-//     }
-// }
+    handleChange = (e) => {
+        this.setState({ ...this.state, isCheck: e.target.checked });
+    }
+    
+    render(){
 
-// render(<feature />, document.getElementById("root"));
+        return(
+            <div className="container">
+                
+                {/* Feature header */}
+                <label for={this.props.feature + "Card"} className="header">
+                    <input
+                        type="checkbox"
+                        id={this.props.feature + "Card"}
+                        checked={this.state.isCheck}
+                        onChange={e => this.handleChange(e)}
+                    />
+                    {this.props.feature}
+                </label>
 
-function FeatureCard(props) {
-    return (
-        <div className="container">
-            {/* Feature header */}
-            <div className="header">
-                <p>{props.feature}</p>
-                {/* <Checkbox title={"hi"} checked={this.state.checked} /> */}
-                {/* <Text> {"hello"} </Text> */}
+                {/* Song text label */}
+                <div className="song">
+                    <p>Song: </p>
+                </div>
+
+                {/* Input text field */}
+                <input
+                    type="text"
+                    placeholder="Search for a song..."
+                    className="text-field"
+                />
             </div>
-
-            {/* Song text label */}
-            <div className="song">
-                <p>Song: </p>
-            </div>
-
-            {/* Input text field */}
-            <input
-                type="text"
-                placeholder="Search for a song..."
-                className="text-field"
-            />
-        </div>
-    );
+        );
+    }
 }
 
 export default FeatureCard;

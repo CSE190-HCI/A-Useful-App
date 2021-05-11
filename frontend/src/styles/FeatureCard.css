@@ -26,14 +26,16 @@ Notes:  - The container width is sized by .text-field.
     display: flex;
     flex-direction: row;
     justify-content: center;
+    align-items: center;
     padding: 10px;
 }
 
-.header p {
-    margin: 0;
-    font-size: large;
-    color: white;
-}
+/* label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: chartreuse;
+} */
 
 /* Song text label */
 
