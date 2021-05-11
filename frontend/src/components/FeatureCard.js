@@ -18,18 +18,17 @@ class FeatureCard extends React.Component{
 
         return(
             <div className="container">
+                
                 {/* Feature header */}
-                <div className="header">
-                    <label for={this.props.feature + "Card"}>
-                        <input
-                            type="checkbox"
-                            id={this.props.feature + "Card"}
-                            checked={this.state.isCheck}
-                            onChange={e => this.handleChange(e)}
-                        />
-                        {this.props.feature}
-                    </label>
-                </div>
+                <label for={this.props.feature + "Card"} className="header">
+                    <input
+                        type="checkbox"
+                        id={this.props.feature + "Card"}
+                        checked={this.state.isCheck}
+                        onChange={e => this.handleChange(e)}
+                    />
+                    {this.props.feature}
+                </label>
 
                 {/* Song text label */}
                 <div className="song">
