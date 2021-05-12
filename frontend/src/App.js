@@ -10,7 +10,6 @@ function App() {
                 <FeatureCard feature="Valence"/>
                 <FeatureCard feature="Tempo"/>
             </header>
-            <feature />
         </div>
     );
 }
