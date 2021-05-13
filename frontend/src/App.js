@@ -5,7 +5,7 @@ function App() {
     return (
         <div className="App">
             <header className="App-header">
-                <p>Web Name</p>
+                <p>Web Name</p>                
                 <FeatureCard feature="Danceability"/>
                 <FeatureCard feature="Valence"/>
                 <FeatureCard feature="Tempo"/>

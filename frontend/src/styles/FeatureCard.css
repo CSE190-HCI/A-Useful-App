@@ -30,13 +30,6 @@ Notes:  - The container width is sized by .text-field.
     padding: 10px;
 }
 
-/* label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: chartreuse;
-} */
-
 /* Song text label */
 
 .song {
