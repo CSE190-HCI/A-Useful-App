@@ -13,8 +13,6 @@ class FeatureCard extends React.Component{
             results: {},
             loading: false,
             message: '',
-            // TODO: can delete this once we properly get results
-            searchAppear: false,
             // just for where to put the search results
             searchStyle: {
                 top: 0,
@@ -22,13 +20,6 @@ class FeatureCard extends React.Component{
                 width: 0
             }
         };
-
-        // TODO: delete this later; hardcoded data
-        this.testItems = [
-            <SearchDisplayItem songName="Perfect" artist="Ed Sheeran" key='1'/>,
-            <SearchDisplayItem songName="Love Confession" artist="Jay Chou" key='2'/>,
-            <SearchDisplayItem songName="lo-fi hip hop" artist="tysu" key='3'/>,
-        ]
 
 		this.cancel = '';
     }
@@ -43,10 +34,6 @@ class FeatureCard extends React.Component{
     // TODO: maybe delete this if don't need it
     handleBlur = (e) => {
         this.setState({ searchAppear: false });
-    }
-
-    handleChange = (e) => {
-        this.setState({ ...this.state, isCheck: e.target.checked });
     }
 
     handleOnInputChange = (e) => {
@@ -91,13 +78,17 @@ class FeatureCard extends React.Component{
 
 	renderSearchResults = () => {
 		const {results} = this.state;
-		if (Object.keys(this.state.results).length) {
+		if (Object.keys(this.state.results).length && 
+				this.state.results.albums.items.length) {
+			
+			// get the first three songs
 			const songs = [
 				this.state.results.albums.items[0],
 				this.state.results.albums.items[1],
 				this.state.results.albums.items[2],
 			];
 
+			// create the search display items from each song
 			const items = songs.map(song => {
 				return <SearchDisplayItem 
 					songName={song.name}
@@ -124,12 +115,6 @@ class FeatureCard extends React.Component{
 							
 							{/* Feature header */}
 							<label htmlFor={this.props.feature + "Card"} className="header">
-									<input
-											type="checkbox"
-											id={this.props.feature + "Card"}
-											checked={this.state.isCheck}
-											onChange={e => this.handleChange(e)}												
-									/>
 									{this.props.feature}
 							</label>
 
@@ -147,15 +132,6 @@ class FeatureCard extends React.Component{
 									onFocus={e => this.handleFocus(e)}
 									onBlur={e => this.handleBlur(e)}
 							/>
-
-							{/* TODO: delete this once results properly come thru */}
-							{/* { this.state.searchAppear ? 
-								<SearchDisplayList 
-									items={this.testItems}
-									style={this.state.searchStyle}
-								/> :
-								<></>
-							} */}
 
 							{/* Search Result field */}
 							{ this.renderSearchResults() }
