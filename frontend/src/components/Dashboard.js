@@ -50,44 +50,39 @@ class Dashboard extends React.Component {
 
     fetchSearchResults = (query) => {
         const searchUrl = `https://api.spotify.com/v1/search?query=${encodeURIComponent(query)}&type=album,playlist,artist`;
-            if (this.cancel) {
-                // Cancel the previous request before making a new request
-                this.cancel.cancel();
-            }
-            // Create a new CancelToken
-            this.cancel = axios.CancelToken.source();
-    
-            get(searchUrl, {
-                    cancelToken: this.cancel.token,
-                })
-                .then((res) => {
-                    console.log(res);
-                    this.setState({
-                        results: res,
-                        loading: false,
-                    });
-                })
-                .catch((error) => {
-                    if (axios.isCancel(error) || error) {
-                        this.setState({
-                            loading: false,
-                            message: 'Failed to fetch results.Please check network',
-                        });
-                    }
+        if (this.cancel) {
+            // Cancel the previous request before making a new request
+            this.cancel.cancel();
+        }
+        // Create a new CancelToken
+        this.cancel = axios.CancelToken.source();
+
+        get(searchUrl, {
+            cancelToken: this.cancel.token,
+        })
+        .then((res) => {
+            console.log(res);
+            this.setState({
+                results: res,
+                loading: false,
+            });
+        })
+        .catch((error) => {
+            if (axios.isCancel(error) || error) {
+                this.setState({
+                    loading: false,
+                    message: 'Failed to fetch results.Please check network',
                 });
-        };
+            }
+        });
+    };
 
     renderSearchResults = () => {
-		const {results} = this.state;
 		if (Object.keys(this.state.results).length && 
 				this.state.results.albums.items.length) {
 			
 			// get the first three songs
-			const songs = [
-				this.state.results.albums.items[0],
-				this.state.results.albums.items[1],
-				this.state.results.albums.items[2],
-			];
+            const songs = this.state.results.albums.items;
 
 			// create the search display items from each song
 			const items = songs.map(song => {
@@ -102,7 +97,7 @@ class Dashboard extends React.Component {
 				<div className="results-container">
 					<SearchDisplayList 
 						items={ items } 
-						style={this.state.searchStyle}
+						style={ this.state.searchStyle }
 					/>
 				</div>
 			);
