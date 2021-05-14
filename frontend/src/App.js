@@ -1,16 +1,21 @@
 import "./App.css";
-import FeatureCard from "./components/FeatureCard";
+import Home from "./components/Home"
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import RedirectPage from "./components/RedirectPage";
+import Dashboard from "./components/Dashboard";
+
 
 function App() {
     return (
-        <div className="App">
-            <header className="App-header">
-                <p>Web Name</p>                
-                <FeatureCard feature="Danceability"/>
-                <FeatureCard feature="Valence"/>
-                <FeatureCard feature="Tempo"/>
-            </header>
-        </div>
+        <Router>
+            <div className="App">
+                <Switch>
+                    <Route path="/" component={Home} exact={true}/>
+                    <Route path="/redirect" component={RedirectPage}/>
+                    <Route path="/dashboard" component={Dashboard} />
+                </Switch>
+            </div>
+        </Router>
     );
 }
 

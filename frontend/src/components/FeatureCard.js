@@ -2,7 +2,7 @@ import React from "react";
 import "../styles/FeatureCard.css";
 import axios from "axios";
 import { SearchDisplayList, SearchDisplayItem } from "../components/SearchDisplayList";
-
+import { get } from '../utils/api';
 class FeatureCard extends React.Component{
     constructor(props) {
         super(props);
@@ -13,42 +13,42 @@ class FeatureCard extends React.Component{
             results: {},
             loading: false,
             message: '',
-						// TODO: can delete this once we properly get results
-						searchAppear: false,
-						// just for where to put the search results
-						searchStyle: {
-							top: 0,
-							left: 0,
-							width: 0
-						}
+            // TODO: can delete this once we properly get results
+            searchAppear: false,
+            // just for where to put the search results
+            searchStyle: {
+                top: 0,
+                left: 0,
+                width: 0
+            }
         };
 
-				// TODO: delete this later; hardcoded data
-				this.testItems = [
-					<SearchDisplayItem songName="Perfect" artist="Ed Sheeran" key='1'/>,
-					<SearchDisplayItem songName="Love Confession" artist="Jay Chou" key='2'/>,
-					<SearchDisplayItem songName="lo-fi hip hop" artist="tysu" key='3'/>,
-				]
+        // TODO: delete this later; hardcoded data
+        this.testItems = [
+            <SearchDisplayItem songName="Perfect" artist="Ed Sheeran" key='1'/>,
+            <SearchDisplayItem songName="Love Confession" artist="Jay Chou" key='2'/>,
+            <SearchDisplayItem songName="lo-fi hip hop" artist="tysu" key='3'/>,
+        ]
 
 		this.cancel = '';
     }
 
-		// TODO: maybe delete this if don't need it
-		handleFocus = (e) => {
-			let rect = e.target.getBoundingClientRect();
-			this.setState({ searchStyle: { top: rect.bottom, left: rect.left, width: rect.width } });
-			this.setState({ searchAppear: true });
-		}
-		
-		// TODO: maybe delete this if don't need it
-		handleBlur = (e) => {
-			this.setState({ searchAppear: false });
-		}
+    // TODO: maybe delete this if don't need it
+    handleFocus = (e) => {
+        let rect = e.target.getBoundingClientRect();
+        this.setState({ searchStyle: { top: rect.bottom, left: rect.left, width: rect.width } });
+        this.setState({ searchAppear: true });
+    }
+    
+    // TODO: maybe delete this if don't need it
+    handleBlur = (e) => {
+        this.setState({ searchAppear: false });
+    }
 
     handleChange = (e) => {
         this.setState({ ...this.state, isCheck: e.target.checked });
     }
-    
+
     handleOnInputChange = (e) => {
 			const query = e.target.value;
 			if ( ! query ) {
@@ -61,24 +61,21 @@ class FeatureCard extends React.Component{
 		};
 
 	fetchSearchResults = (query) => {
-		const searchUrl = `https://api.spotify.com/v1/search?q=${query}`;
+    const searchUrl = `https://api.spotify.com/v1/search?query=${encodeURIComponent(query)}&type=album,playlist,artist`;
 		if (this.cancel) {
 			// Cancel the previous request before making a new request
 			this.cancel.cancel();
 		}
 		// Create a new CancelToken
 		this.cancel = axios.CancelToken.source();
-		axios
-			.get(searchUrl, {
+
+		get(searchUrl, {
 				cancelToken: this.cancel.token,
 			})
 			.then((res) => {
-				const resultNotFoundMsg = !res.data.hits.length
-					? 'There are no more search results. Please try a new search.'
-					: '';
+				console.log(res);
 				this.setState({
-					results: res.data.hits,
-					message: resultNotFoundMsg,
+					results: res,
 					loading: false,
 				});
 			})
@@ -90,6 +87,7 @@ class FeatureCard extends React.Component{
 					});
 				}
 			});
+			console.log(this.state);
 	};
 
 	renderSearchResults = () => {
