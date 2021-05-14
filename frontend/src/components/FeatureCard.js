@@ -87,16 +87,31 @@ class FeatureCard extends React.Component{
 					});
 				}
 			});
-			console.log(this.state);
 	};
 
 	renderSearchResults = () => {
 		const {results} = this.state;
-		if (Object.keys(results).length && results.length) {
+		if (Object.keys(this.state.results).length) {
+			const songs = [
+				this.state.results.albums.items[0],
+				this.state.results.albums.items[1],
+				this.state.results.albums.items[2],
+			];
+
+			const items = songs.map(song => {
+				return <SearchDisplayItem 
+					songName={song.name}
+					artist={song.artists[0].name}
+					key={song.id}
+				/>
+			})
+
 			return (
 				<div className="results-container">
-					Search Result
-					<SearchDisplayList items={ <SearchDisplayItem songName="lo-fi hip hop" artist="tysu" key='3'/> }/>
+					<SearchDisplayList 
+						items={ items } 
+						style={this.state.searchStyle}
+					/>
 				</div>
 			);
 		}
@@ -134,13 +149,13 @@ class FeatureCard extends React.Component{
 							/>
 
 							{/* TODO: delete this once results properly come thru */}
-							{ this.state.searchAppear ? 
+							{/* { this.state.searchAppear ? 
 								<SearchDisplayList 
 									items={this.testItems}
 									style={this.state.searchStyle}
 								/> :
 								<></>
-							}
+							} */}
 
 							{/* Search Result field */}
 							{ this.renderSearchResults() }
