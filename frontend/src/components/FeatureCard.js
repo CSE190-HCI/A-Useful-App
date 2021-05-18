@@ -1,19 +1,18 @@
 import React from "react";
 import "../styles/FeatureCard.css";
-class FeatureCard extends React.Component{
-    render(){
-        return(
-					<div className="container">
-							{/* Feature header */}
-							<label htmlFor={this.props.feature + "Card"} className="header">
-									{this.props.feature}
-							</label>
-							{/* Songs text label */}
-							<div className="song">
-									<p>Songs: </p>
-							</div>
-
-					</div>
+class FeatureCard extends React.Component {
+    render() {
+        return (
+            <div className="container">
+                {/* Feature header */}
+                <label htmlFor={this.props.feature + "Card"} className="header">
+                    {this.props.feature}
+                </label>
+                {/* Songs text label */}
+                <div className="song">
+                    <p>Songs: </p>
+                </div>
+            </div>
         );
     }
 }
