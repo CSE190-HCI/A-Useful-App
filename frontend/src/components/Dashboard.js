@@ -4,6 +4,7 @@ import { SearchDisplayList, SearchDisplayItem } from "../components/SearchDispla
 import { get } from '../utils/api';
 import axios from "axios";
 import "../styles/Dashboard.css";
+import Dropzone from "./Dropzone";
 
 class Dashboard extends React.Component {
     constructor(props) {
@@ -107,7 +108,7 @@ class Dashboard extends React.Component {
 				</div>
 			);
 		}
-	};
+    };
 
     render() {
         return(
@@ -128,10 +129,8 @@ class Dashboard extends React.Component {
                         {/* Search Result field */}
                         { this.renderSearchResults() }
                     </div>
-                    <div className="feature-buckets">           
-                        <FeatureCard feature="Energy"/>
-                        <FeatureCard feature="Instrumentalness"/>
-                        <FeatureCard feature="Mood"/>
+                    <div>
+                        <Dropzone/>
                     </div>
                     <div className="results">
                         <p>Results</p>
