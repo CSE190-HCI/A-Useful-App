@@ -5,6 +5,7 @@ import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
 import { ResultsList, ResultsItem, TotalBar } from "./ResultsList";
 
 import "../styles/Dashboard.css";
+import Dropzone from "./Dropzone";
 
 import { get } from "../utils/api";
 import axios from "axios";
@@ -148,6 +149,36 @@ class Dashboard extends React.Component {
     };
 
     renderSearchResults = () => {
+
+// 		const {results} = this.state;
+// 		if (Object.keys(this.state.results).length && 
+// 				this.state.results.albums.items.length) {
+			
+// 			// get the first three songs
+// 			const songs = [
+// 				this.state.results.albums.items[0],
+// 				this.state.results.albums.items[1],
+// 				this.state.results.albums.items[2],
+// 			];
+
+// 			// create the search display items from each song
+// 			const items = songs.map(song => {
+// 				return <SearchDisplayItem 
+// 					songName={song.name}
+// 					artist={song.artists[0].name}
+// 					key={song.id}
+// 				/>
+// 			})
+
+// 			return (
+// 				<div className="results-container">
+// 					<SearchDisplayList 
+// 						items={ items } 
+// 						style={this.state.searchStyle}
+// 					/>
+// 				</div>
+// 			);
+// 		}
         if (
             Object.keys(this.state.results).length &&
             this.state.results.albums.items.length
@@ -196,10 +227,15 @@ class Dashboard extends React.Component {
                         {/* Search Result field */}
                         {this.renderSearchResults()}
                     </div>
-                    <div className="feature-buckets">
-                        <FeatureCard feature="Energy" />
-                        <FeatureCard feature="Instrumentalness" />
-                        <FeatureCard feature="Mood" />
+
+                    <div>
+                        <Dropzone/>
+
+//                     <div className="feature-buckets">
+//                         <FeatureCard feature="Energy" />
+//                         <FeatureCard feature="Instrumentalness" />
+//                         <FeatureCard feature="Mood" />
+
                     </div>
                     <div className="results">
                         <p>Results</p>
