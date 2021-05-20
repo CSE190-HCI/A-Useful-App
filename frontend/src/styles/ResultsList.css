@@ -1,0 +1,24 @@
+.results-list-container {
+    display: flex;
+    flex-direction: column;
+    background-color: grey;
+}
+
+.results-list-item {
+    background-color: grey;
+    margin: 1vh;
+    /* display: flex; */
+}
+
+.results-total-bar {
+    position: relative;
+    width: 100%;
+    height: 25px;
+    background-color: white;
+}
+
+.results-bar {
+    position: absolute;
+    height: 25px;
+    background-color: white;
+}

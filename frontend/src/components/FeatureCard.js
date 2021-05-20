@@ -20,6 +20,7 @@ class FeatureCard extends React.Component{
 							</div>
 
 					</div>
+
         );
     }
 }

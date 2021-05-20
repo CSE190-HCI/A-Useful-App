@@ -1,0 +1,6 @@
+.vscode
+
+# Backend
+/backend/api/credentials.py
+/backend/api/__pycache__
+/backend/api/.cache

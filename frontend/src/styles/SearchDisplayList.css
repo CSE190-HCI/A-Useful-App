@@ -6,6 +6,8 @@
     display: flex;
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.75);
+    height: 700px;
+    overflow: auto;
 }
 
 /* Search result item */
