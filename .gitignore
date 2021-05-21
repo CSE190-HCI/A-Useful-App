@@ -4,3 +4,4 @@
 /backend/api/credentials.py
 /backend/api/__pycache__
 /backend/api/.cache
+node_modules
