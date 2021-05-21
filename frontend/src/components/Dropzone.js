@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/Dropzone.css";
 import FeatureCard from "./FeatureCard";
+import SearchDisplayItem from "./SearchDisplayList";
 
 
 class Dropzone extends React.Component{
@@ -9,15 +10,18 @@ class Dropzone extends React.Component{
     }
 
     state = {
-        list:[{name:"song 1", status:"decided1"},
-                {name:"song 2", status:"selected"},
-                {name:"song 3", status:"decided2"},
-                {name:"song 4", status:"decided3"}]
-    }
+            list:[{name:this.props.selectedSong,status:"selected"}]
+        }
+
+        // list:[{name:{props.songName}, status:"decided1"},
+        //         {name:"song 2", status:"selected"},
+        //         {name:"song 3", status:"decided2"},
+        //         {name:"song 4", status:"decided3"}]
+
 
     handleDragStart=(e,name)=>{
         console.log(name)
-    e.dataTransfer.setData("id", name)
+        e.dataTransfer.setData("id", name)
     }
 
     handleDragOver=(e)=>{

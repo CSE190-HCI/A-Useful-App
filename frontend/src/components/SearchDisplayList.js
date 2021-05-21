@@ -23,4 +23,4 @@ class SearchDisplayItem extends React.Component {
   }
 }
 
-export { SearchDisplayList, SearchDisplayItem };
+export { SearchDisplayList, SearchDisplayItem };git 

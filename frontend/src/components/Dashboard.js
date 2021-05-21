@@ -25,6 +25,10 @@ class Dashboard extends React.Component {
                 left: 0,
                 width: 0,
             },
+
+            selectedSong : "",
+            selectedArtist : "",
+            songID : "",
         };
 
         this.cancel = "";
@@ -163,6 +167,7 @@ class Dashboard extends React.Component {
                         songName={song.name}
                         artist={song.artists[0].name}
                         key={song.id}
+                        handleUpdate = {this.handleSelect(song.name,song.artists[0].name,song.id)}
                     />
                 );
             });
