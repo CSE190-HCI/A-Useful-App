@@ -25,11 +25,12 @@ class Dashboard extends React.Component {
                 left: 0,
                 width: 0,
             },
-
-            selectedSong : "",
-            selectedArtist : "",
-            songID : "",
-            isUpdate: false
+            isUpdate: false,
+            preventSearchDisappear: false,
+            searchAppear: false,
+            selectedSong : "song",
+            selectedArtist : "artist",
+            songID : "id",
         };
 
         this.cancel = "";
@@ -105,10 +106,15 @@ class Dashboard extends React.Component {
         });
         this.setState({ searchAppear: true });
     };
+    
+    checkSearch = () => {
+        console.log(`PreventSearchDisappear is now ${this.state.preventSearchDisappear}`);
+    }
 
     // TODO: maybe delete this if don't need it
     handleBlur = (e) => {
-        this.setState({ searchAppear: false });
+        this.checkSearch();
+        if(!this.state.preventSearchDisappear) this.setState({ searchAppear: false });
     };
 
     handleOnInputChange = (e) => {
@@ -153,15 +159,33 @@ class Dashboard extends React.Component {
             });
     };
 
+    printSongArtistID = () => {
+        console.log(`this.state is now ${this.state.selectedSong}, ${this.state.selectedArtist}, ${this.state.songID}`);
+    }
+
     handleSelect = (name, artist, ID) => {
         this.setState({
+          preventSearchDisappear : false,
           selectedSong : name,
           selectedArtist : artist, 
           songID : ID,
           isUpdate : true
-        });
+        }, this.printSongArtistID);
     }
 
+    handleMouseEnter = () => {
+        console.log("handleMouseEnter is called");
+        this.setState({
+            preventSearchDisappear : true,
+        });
+    }
+    
+    handleMouseLeave = () => {
+        console.log("handleMouseLeave is called");
+        this.setState({
+            preventSearchDisappear : false,
+        }, this.checkSearch());
+    }
 
     renderSearchResults = () => {
         if (
@@ -178,7 +202,10 @@ class Dashboard extends React.Component {
                         songName={song.name}
                         artist={song.artists[0].name}
                         key={song.id}
-                        handleUpdate = {this.handleSelect(song.name,song.artists[0].name,song.id)}
+                        id={song.id}
+                        handleUpdate = {this.handleSelect}
+                        handleMouseEnter = {this.handleMouseEnter}
+                        handleMouseLeave = {this.handleMouseLeave}
                     />
                 );
             });
@@ -211,7 +238,7 @@ class Dashboard extends React.Component {
                         />
 
                         {/* Search Result field */}
-                        {this.renderSearchResults()}
+                        {this.state.searchAppear ? this.renderSearchResults() : <></>}
                     </div>
 
                     <div>

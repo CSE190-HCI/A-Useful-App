@@ -14,13 +14,18 @@ class SearchDisplayList extends React.Component {
 
 class SearchDisplayItem extends React.Component {
 
-  handleUpdate = () => {
-    this.props.handleUpdate()
+  handleSelect = () => {
+    this.props.handleUpdate(this.props.songName, this.props.artist, this.props.id);
   };
 
   render() {
     return (
-      <div className="item-container" onClick = {this.handleUpdate}>
+      <div
+        className="item-container"
+        onClick={this.handleSelect}
+        onMouseEnter={this.props.handleMouseEnter}
+        onMouseLeave={this.props.handleMouseLeave}
+      >
         <label className="song-name"> { this.props.songName } </label>
         <label className="artist"> { this.props.artist } </label>
       </div>
