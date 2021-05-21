@@ -13,9 +13,14 @@ class SearchDisplayList extends React.Component {
 }
 
 class SearchDisplayItem extends React.Component {
+
+  handleUpdate = () => {
+    this.props.handleUpdate()
+  };
+
   render() {
     return (
-      <div className="item-container">
+      <div className="item-container" onClick = {this.handleUpdate}>
         <label className="song-name"> { this.props.songName } </label>
         <label className="artist"> { this.props.artist } </label>
       </div>
@@ -23,4 +28,4 @@ class SearchDisplayItem extends React.Component {
   }
 }
 
-export { SearchDisplayList, SearchDisplayItem };git 
+export { SearchDisplayList, SearchDisplayItem };

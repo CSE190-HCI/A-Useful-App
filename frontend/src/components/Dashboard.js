@@ -29,6 +29,7 @@ class Dashboard extends React.Component {
             selectedSong : "",
             selectedArtist : "",
             songID : "",
+            isUpdate: false
         };
 
         this.cancel = "";
@@ -152,6 +153,16 @@ class Dashboard extends React.Component {
             });
     };
 
+    handleSelect = (name, artist, ID) => {
+        this.setState({
+          selectedSong : name,
+          selectedArtist : artist, 
+          songID : ID,
+          isUpdate : true
+        });
+    }
+
+
     renderSearchResults = () => {
         if (
             Object.keys(this.state.results).length &&
@@ -204,7 +215,7 @@ class Dashboard extends React.Component {
                     </div>
 
                     <div>
-                        <Dropzone/>
+                    <Dropzone selectedSong = {this.state.selectedSong} selectedArtist = {this.state.selectedArtist} songID = {this.state.songID}/>
                     </div>
                     
                     <div className="results">
