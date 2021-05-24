@@ -1,11 +1,14 @@
 .results-list-container {
     display: flex;
     flex-direction: column;
-    background-color: grey;
+    background-color: #282c34;
 }
 
+.results-feature-font {
+    font-size: 20px;
+}
 .results-list-item {
-    background-color: grey;
+    background-color: #282c34;
     margin: 1vh;
     /* display: flex; */
 }

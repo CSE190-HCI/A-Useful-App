@@ -1,23 +1,132 @@
-import axios from 'axios';
+import axios from "axios";
+import { get } from "../utils/api";
+
 export const getParamValues = (url) => {
     return url
         .slice(1)
-        .split('&')
+        .split("&")
         .reduce((prev, curr) => {
-            const [title, value] = curr.split('=');
+            const [title, value] = curr.split("=");
             prev[title] = value;
             return prev;
         }, {});
 };
 export const setAuthHeader = () => {
     try {
-        const params = JSON.parse(localStorage.getItem('params'));
+        const params = JSON.parse(localStorage.getItem("params"));
         if (params) {
             axios.defaults.headers.common[
-                'Authorization'
+                "Authorization"
             ] = `Bearer ${params.access_token}`;
         }
     } catch (error) {
-        console.log('Error setting auth', error);
+        console.log("Error setting auth", error);
     }
+};
+
+const convertToPercentage = (value) => {
+    return Math.round((value / 1) * 100) + "%";
+};
+
+const computeWidths = (targetValue, suggestionValue) => {
+    let greenWidth =
+        suggestionValue >= targetValue
+            ? convertToPercentage(suggestionValue)
+            : convertToPercentage(0);
+    let redWidth =
+        suggestionValue < targetValue
+            ? convertToPercentage(targetValue)
+            : convertToPercentage(0);
+    let baseWidth =
+        suggestionValue < targetValue
+            ? convertToPercentage(suggestionValue)
+            : convertToPercentage(targetValue);
+    return {
+        baseWidth: baseWidth,
+        redWidth: redWidth,
+        greenWidth: greenWidth,
+    };
+};
+
+export const computeWidthsForFeatures = (target, songSuggestion) => {
+    let featureRatios = {};
+    for (const feature of Object.keys(target)) {
+        featureRatios[feature] = computeWidths(
+            target[feature],
+            songSuggestion[feature]
+        );
+    }
+    return featureRatios;
+};
+
+const normalize = (val, min, max) => {
+    return (val - min) / (max - min);
+};
+
+const calculateEnergy = (audioFeatures) => {
+    const average =
+        (audioFeatures.energy +
+            normalize(audioFeatures.loudness, -60, 0) +
+            normalize(audioFeatures.tempo, 0, 247) +
+            audioFeatures.danceability) /
+        4;
+    return average;
+};
+const calculateInstrumentalness = (audioFeatures) => {
+    const average =
+        (audioFeatures.instrumentalness +
+            audioFeatures.speechiness +
+            audioFeatures.liveness +
+            audioFeatures.acousticness) /
+        4;
+    return average;
+};
+const calculatePositivity = (audioFeatures) => {
+    console.log("calculatePositivity called");
+    const average =
+        (audioFeatures.valence * 0.8 + audioFeatures.mode * 0.2) / 2;
+    return average;
+};
+
+const extractFeatures = (audioFeatures) => {
+    console.log("extract features called");
+    return new Promise((resolve) => {
+        console.log(`promise resolved`);
+        return {
+            energy: calculateEnergy(audioFeatures),
+            instrumentalness: calculateInstrumentalness(audioFeatures),
+            positivity: calculatePositivity(audioFeatures),
+        };
+    }).then((res) => {
+        return res;
+    });
+};
+
+export const createSongFeaturesObject = async (songId, cancel) => {
+    const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
+    if (cancel) {
+        // Cancel the previous request before making a new request
+        cancel.cancel();
+    }
+    // Create a new CancelToken
+    cancel = axios.CancelToken.source();
+
+    get(getFeaturesUrl, {
+        cancelToken: cancel.token,
+    })
+        .then((res) => {
+            console.log(res);
+            return extractFeatures(res);
+            // extractFeatures(res).then((res) => {
+            //     return res;
+            // });
+            // console.log(result);
+            // return result;
+        })
+        .catch((error) => {
+            if (axios.isCancel(error) || error) {
+                console.log("Failed to fetch results.Please check network");
+                return;
+            }
+        });
 };

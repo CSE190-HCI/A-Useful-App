@@ -6,6 +6,10 @@ import { ResultsList, ResultsItem, TotalBar } from "./ResultsList";
 
 import "../styles/Dashboard.css";
 import Dropzone from "./Dropzone";
+import {
+    computeWidthsForFeatures,
+    createSongFeaturesObject,
+} from "../utils/functions.js";
 
 import { get } from "../utils/api";
 import axios from "axios";
@@ -28,54 +32,55 @@ class Dashboard extends React.Component {
             isUpdate: false,
             preventSearchDisappear: false,
             searchAppear: false,
-            selectedSong : "song",
-            selectedArtist : "artist",
-            songID : "id",
+            selectedSong: "song",
+            selectedArtist: "artist",
+            songID: "id",
         };
 
         this.cancel = "";
     }
 
-    target = { energy: 0.7, instrumentalness: 0.45, mood: 0.75 };
-    songSuggestion = { energy: 0.8, instrumentalness: 0.5, mood: 0.65 };
+    buckets = [
+        {
+            energy: [
+                { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 },
+            ],
+            instrumentalness: [],
+            positivity: [
+                { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
+                { energy: 0.85, instrumentalness: 0.45, positivity: 0.36 },
+            ],
+        },
+    ];
 
-    convertToPercentage = (value) => {
-        return Math.round((value / 1) * 100) + "%";
+    // { energy: 0.85, instrumentalness: 0.45, positivity: 0.36 } = songFeaturesObject
+
+    // function(buckets) -> targetAcc
+
+    printRes = (res) => {
+        console.log(`res is ${res}`);
     };
 
-    computeWidths = (targetValue, suggestionValue) => {
-        let greenWidth =
-            suggestionValue >= targetValue
-                ? this.convertToPercentage(suggestionValue)
-                : this.convertToPercentage(0);
-        let redWidth =
-            suggestionValue < targetValue
-                ? this.convertToPercentage(targetValue)
-                : this.convertToPercentage(0);
-        let baseWidth =
-            suggestionValue < targetValue
-                ? this.convertToPercentage(suggestionValue)
-                : this.convertToPercentage(targetValue);
-        return {
-            baseWidth: baseWidth,
-            redWidth: redWidth,
-            greenWidth: greenWidth,
-        };
-    };
+    componentDidMount() {
+        const songFeatureObj = createSongFeaturesObject(
+            "53nhbx7yp4TJEpmMBCLWPQ",
+            this.state.cancel
+        );
+        this.setState({ loading: false });
+        console.log(`createSongFeaturesObject returns ${songFeatureObj}`);
+        songFeatureObj.then((res, err) => {
+            this.printRes(res);
+        });
+    }
 
-    computeWidthsForFeatures = (target, songSuggestion) => {
-        let featureRatios = {};
-        for (const feature of Object.keys(target)) {
-            featureRatios[feature] = this.computeWidths(
-                target[feature],
-                songSuggestion[feature]
-            );
-        }
-        return featureRatios;
-    };
+    /* When a song gets dragged into a bucket, add songFeaturesObject to the right bucket
+       in buckets[], then call computeWidthsForFeatures
+     */
+    targetAcc = { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 };
+    songSuggestion = {};
 
-    featureRatios = this.computeWidthsForFeatures(
-        this.target,
+    featureRatios = computeWidthsForFeatures(
+        this.targetAcc,
         this.songSuggestion
     );
 
@@ -89,8 +94,8 @@ class Dashboard extends React.Component {
             bar={<TotalBar widths={this.featureRatios.instrumentalness} />}
         />,
         <ResultsItem
-            feature="Mood"
-            bar={<TotalBar widths={this.featureRatios.mood} />}
+            feature="Positivity"
+            bar={<TotalBar widths={this.featureRatios.positivity} />}
         />,
     ];
 
@@ -106,15 +111,18 @@ class Dashboard extends React.Component {
         });
         this.setState({ searchAppear: true });
     };
-    
+
     checkSearch = () => {
-        console.log(`PreventSearchDisappear is now ${this.state.preventSearchDisappear}`);
-    }
+        console.log(
+            `PreventSearchDisappear is now ${this.state.preventSearchDisappear}`
+        );
+    };
 
     // TODO: maybe delete this if don't need it
     handleBlur = (e) => {
         this.checkSearch();
-        if(!this.state.preventSearchDisappear) this.setState({ searchAppear: false });
+        if (!this.state.preventSearchDisappear)
+            this.setState({ searchAppear: false });
     };
 
     handleOnInputChange = (e) => {
@@ -160,32 +168,40 @@ class Dashboard extends React.Component {
     };
 
     printSongArtistID = () => {
-        console.log(`this.state is now ${this.state.selectedSong}, ${this.state.selectedArtist}, ${this.state.songID}`);
-    }
+        console.log(
+            `this.state is now ${this.state.selectedSong}, ${this.state.selectedArtist}, ${this.state.songID}`
+        );
+    };
 
     handleSelect = (name, artist, ID) => {
-        this.setState({
-          preventSearchDisappear : false,
-          selectedSong : name,
-          selectedArtist : artist, 
-          songID : ID,
-          isUpdate : true
-        }, this.printSongArtistID);
-    }
+        this.setState(
+            {
+                preventSearchDisappear: false,
+                selectedSong: name,
+                selectedArtist: artist,
+                songID: ID,
+                isUpdate: true,
+            },
+            this.printSongArtistID
+        );
+    };
 
     handleMouseEnter = () => {
         console.log("handleMouseEnter is called");
         this.setState({
-            preventSearchDisappear : true,
+            preventSearchDisappear: true,
         });
-    }
-    
+    };
+
     handleMouseLeave = () => {
         console.log("handleMouseLeave is called");
-        this.setState({
-            preventSearchDisappear : false,
-        }, this.checkSearch());
-    }
+        this.setState(
+            {
+                preventSearchDisappear: false,
+            },
+            this.checkSearch()
+        );
+    };
 
     renderSearchResults = () => {
         if (
@@ -203,9 +219,9 @@ class Dashboard extends React.Component {
                         artist={song.artists[0].name}
                         key={song.id}
                         id={song.id}
-                        handleUpdate = {this.handleSelect}
-                        handleMouseEnter = {this.handleMouseEnter}
-                        handleMouseLeave = {this.handleMouseLeave}
+                        handleUpdate={this.handleSelect}
+                        handleMouseEnter={this.handleMouseEnter}
+                        handleMouseLeave={this.handleMouseLeave}
                     />
                 );
             });
@@ -238,13 +254,21 @@ class Dashboard extends React.Component {
                         />
 
                         {/* Search Result field */}
-                        {this.state.searchAppear ? this.renderSearchResults() : <></>}
+                        {this.state.searchAppear ? (
+                            this.renderSearchResults()
+                        ) : (
+                            <></>
+                        )}
                     </div>
 
                     <div>
-                    <Dropzone selectedSong = {this.state.selectedSong} selectedArtist = {this.state.selectedArtist} songID = {this.state.songID}/>
+                        <Dropzone
+                            selectedSong={this.state.selectedSong}
+                            selectedArtist={this.state.selectedArtist}
+                            songID={this.state.songID}
+                        />
                     </div>
-                    
+
                     <div className="results">
                         <p>Results</p>
                         <ResultsList items={this.items} />
