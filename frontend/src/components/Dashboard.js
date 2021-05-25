@@ -9,6 +9,8 @@ import Dropzone from "./Dropzone";
 import {
     computeWidthsForFeatures,
     createSongFeaturesObject,
+    returnResultsItems,
+    calculateBaselines,
 } from "../utils/functions.js";
 
 import { get } from "../utils/api";
@@ -35,69 +37,58 @@ class Dashboard extends React.Component {
             selectedSong: "song",
             selectedArtist: "artist",
             songID: "id",
+            resultsItems: [],            
         };
 
         this.cancel = "";
     }
 
-    buckets = [
-        {
-            energy: [
-                { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 },
-            ],
-            instrumentalness: [],
-            positivity: [
-                { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
-                { energy: 0.85, instrumentalness: 0.45, positivity: 0.36 },
-            ],
-        },
-    ];
-
-    // { energy: 0.85, instrumentalness: 0.45, positivity: 0.36 } = songFeaturesObject
-
-    // function(buckets) -> targetAcc
-
-    printRes = (res) => {
-        console.log(`res is ${res}`);
-    };
-
-    componentDidMount() {
-        const songFeatureObj = createSongFeaturesObject(
-            "53nhbx7yp4TJEpmMBCLWPQ",
-            this.state.cancel
-        );
-        this.setState({ loading: false });
-        console.log(`createSongFeaturesObject returns ${songFeatureObj}`);
-        songFeatureObj.then((res, err) => {
-            this.printRes(res);
-        });
+    buckets = {
+        energy: [
+            { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 },
+        ],
+        instrumentalness: [],
+        positivity: [
+            { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
+            { energy: 0.26, instrumentalness: 0.45, positivity: 0.36 },
+        ],
     }
-
+    
     /* When a song gets dragged into a bucket, add songFeaturesObject to the right bucket
        in buckets[], then call computeWidthsForFeatures
      */
-    targetAcc = { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 };
-    songSuggestion = {};
+    addToBuckets = (songFeaturesObject, buckets, bucket) => {
+        buckets[bucket].push(songFeaturesObject);
+    }
 
-    featureRatios = computeWidthsForFeatures(
-        this.targetAcc,
-        this.songSuggestion
-    );
+    updateResultsItems = (featureRatios) => {
+        this.setState({ resultsItems: returnResultsItems(featureRatios) })
+    }
 
-    items = [
-        <ResultsItem
-            feature="Energy"
-            bar={<TotalBar widths={this.featureRatios.energy} />}
-        />,
-        <ResultsItem
-            feature="Instrumentalness"
-            bar={<TotalBar widths={this.featureRatios.instrumentalness} />}
-        />,
-        <ResultsItem
-            feature="Positivity"
-            bar={<TotalBar widths={this.featureRatios.positivity} />}
-        />,
-    ];
+    updateResultsBars = async (songId, bucketName) => {
+        // get features from a new song
+        const songFeatureObj = await createSongFeaturesObject(
+            songId, this.state.cancel
+            ).then((res) => {
+                this.setState({ loading: false });
+                return res;
+            });
+        
+        // update bucket, calculate base widths, and update results bars
+        this.addToBuckets(songFeatureObj, this.buckets, bucketName);
+        const targetAcc = calculateBaselines(this.buckets);
+        const songSuggestion = {};
+        const featureRatios = computeWidthsForFeatures(
+            targetAcc,
+            songSuggestion
+        );        
+        this.updateResultsItems(featureRatios);
+    }    
+
+    componentDidMount() {
+        this.updateResultsItems(undefined);
+        this.updateResultsBars("53nhbx7yp4TJEpmMBCLWPQ", "positivity");
+    }
 
     // TODO: maybe delete this if don't need it
     handleFocus = (e) => {
@@ -271,7 +262,7 @@ class Dashboard extends React.Component {
 
                     <div className="results">
                         <p>Results</p>
-                        <ResultsList items={this.items} />
+                        <ResultsList items={this.state.resultsItems} />
                     </div>
                 </header>
             </div>

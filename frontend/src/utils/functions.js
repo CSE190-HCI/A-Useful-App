@@ -1,5 +1,6 @@
 import axios from "axios";
 import { get } from "../utils/api";
+import { ResultsItem, TotalBar } from "../components/ResultsList";
 
 export const getParamValues = (url) => {
     return url
@@ -92,11 +93,11 @@ const extractFeatures = (audioFeatures) => {
     console.log("extract features called");
     return new Promise((resolve) => {
         console.log(`promise resolved`);
-        return {
+        resolve({
             energy: calculateEnergy(audioFeatures),
             instrumentalness: calculateInstrumentalness(audioFeatures),
             positivity: calculatePositivity(audioFeatures),
-        };
+        });
     }).then((res) => {
         return res;
     });
@@ -111,22 +112,59 @@ export const createSongFeaturesObject = async (songId, cancel) => {
     // Create a new CancelToken
     cancel = axios.CancelToken.source();
 
-    get(getFeaturesUrl, {
-        cancelToken: cancel.token,
-    })
-        .then((res) => {
-            console.log(res);
-            return extractFeatures(res);
-            // extractFeatures(res).then((res) => {
-            //     return res;
-            // });
-            // console.log(result);
-            // return result;
+    return new Promise((resolve) => {
+        get(getFeaturesUrl, {
+            cancelToken: cancel.token,
         })
-        .catch((error) => {
-            if (axios.isCancel(error) || error) {
-                console.log("Failed to fetch results.Please check network");
-                return;
-            }
-        });
+            .then((res) => {
+                resolve(extractFeatures(res));
+            })
+            .catch((error) => {
+                if (axios.isCancel(error) || error) {
+                    console.log("Failed to fetch results.Please check network");
+                }
+            });
+    })
 };
+
+export const returnResultsItems = (featureRatios) => {
+    console.log(featureRatios);
+    if(!featureRatios) return <></>;
+    return [
+        featureRatios.energy.baseWidth == "0%" ? <></> :
+            <ResultsItem
+                feature="Energy"
+                bar={<TotalBar widths={featureRatios.energy} />}
+            />,
+        featureRatios.instrumentalness.baseWidth == "0%" ? <></> :
+            <ResultsItem
+                feature="Instrumentalness"
+                bar={<TotalBar widths={featureRatios.instrumentalness} />}
+            />,
+        featureRatios.positivity.baseWidth == "0%" ? <></> :
+            <ResultsItem
+                feature="Positivity"
+                bar={<TotalBar widths={featureRatios.positivity} />}
+            />,
+    ];
+}
+
+const calculateBaseline = (bucketName, bucket) => {
+    if(bucket.length === 0) return 0;
+
+    let sum = bucket.reduce((a, b) => {
+        return a + b[bucketName];
+    }, 0);
+
+    return sum / bucket.length;
+}
+
+export const calculateBaselines = (buckets) => {
+    let baselines = {};
+    for(let bucket of Object.entries(buckets)) {
+        const bucketName = bucket[0];
+        let baseline = baselines[bucketName] = calculateBaseline(...bucket);
+        baselines[bucketName] = baseline;
+    }
+    return baselines;
+}
