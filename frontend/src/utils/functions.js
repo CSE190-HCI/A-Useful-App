@@ -49,6 +49,7 @@ const computeWidths = (targetValue, suggestionValue) => {
     };
 };
 
+/* Takes in two songFeatureObjects, and outputs featureRatios */
 export const computeWidthsForFeatures = (target, songSuggestion) => {
     let featureRatios = {};
     for (const feature of Object.keys(target)) {

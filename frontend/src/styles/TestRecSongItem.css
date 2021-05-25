@@ -1,0 +1,38 @@
+/* Main feature card */
+
+.list-container {
+    /* TODO: may have to delete position prop */
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.75);
+    height: 700px;
+    overflow: auto;
+}
+
+/* Search result item */
+
+.test-rec-song-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 2px 30px 7px 10px;
+    border-bottom: 1px solid lightgray;
+}
+
+.test-rec-song-container:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Item labels */
+
+.song-name {
+    text-align: left;
+    font-size: 75%;
+}
+
+.artist {
+    text-align: left;
+    font-size: 50%;
+    color: lightgray;
+}

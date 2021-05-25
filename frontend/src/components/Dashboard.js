@@ -1,6 +1,7 @@
 import React from "react";
 
 import FeatureCard from "./FeatureCard";
+import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
 import { ResultsList, ResultsItem, TotalBar } from "./ResultsList";
 
@@ -37,7 +38,9 @@ class Dashboard extends React.Component {
             selectedSong: "song",
             selectedArtist: "artist",
             songID: "id",
-            resultsItems: [],            
+
+            resultsItems: [],
+            targetAcc: {},
         };
 
         this.cancel = "";
@@ -76,18 +79,34 @@ class Dashboard extends React.Component {
         
         // update bucket, calculate base widths, and update results bars
         this.addToBuckets(songFeatureObj, this.buckets, bucketName);
-        const targetAcc = calculateBaselines(this.buckets);
+        this.setState({ targetAcc: calculateBaselines(this.buckets) });
         const songSuggestion = {};
         const featureRatios = computeWidthsForFeatures(
-            targetAcc,
+            this.state.targetAcc,
             songSuggestion
-        );        
+        );
         this.updateResultsItems(featureRatios);
     }    
 
     componentDidMount() {
         this.updateResultsItems(undefined);
         this.updateResultsBars("53nhbx7yp4TJEpmMBCLWPQ", "positivity");
+    }
+
+    handleMouseEnterTestRecSong = (recSongFeaturesObject) => {
+        const featureRatios = computeWidthsForFeatures(
+            this.state.targetAcc,
+            recSongFeaturesObject
+        );
+        this.updateResultsItems(featureRatios);
+    }
+
+    handleMouseLeaveTestRecSong = () => {
+        const featureRatios = computeWidthsForFeatures(
+            this.state.targetAcc,
+            {}
+        );
+        this.updateResultsItems(featureRatios);
     }
 
     // TODO: maybe delete this if don't need it
@@ -263,6 +282,35 @@ class Dashboard extends React.Component {
                     <div className="results">
                         <p>Results</p>
                         <ResultsList items={this.state.resultsItems} />
+
+                        <TestRecSongItem
+                            songName="Perfect"
+                            artist="Ed Sheeran"
+                            energy="0.6"
+                            instrumentalness="0.2"
+                            positivity="0.7"
+                            handleMouseEnter={this.handleMouseEnterTestRecSong}
+                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                        />
+                        <TestRecSongItem
+                            songName="You Say Run"
+                            artist="Hayashi Yuuki"
+                            energy="0.9"
+                            instrumentalness="0.9"
+                            positivity="0.8"
+                            handleMouseEnter={this.handleMouseEnterTestRecSong}
+                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                        />
+                        <TestRecSongItem
+                            songName="YouSeeBIGGIRL/T:T"
+                            artist="Hiroyuki Sawano"
+                            energy="0.8"
+                            instrumentalness="0.9"
+                            positivity="0.1"
+                            handleMouseEnter={this.handleMouseEnterTestRecSong}
+                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                        />
+
                     </div>
                 </header>
             </div>
