@@ -7,37 +7,18 @@ import SearchDisplayItem from "./SearchDisplayList";
 class Dropzone extends React.Component{
     constructor(props) {
         super(props);
-
-        // this.state = {
-        //     list:[{name:this.props.selectedSong, status:"selected"}]
-        // };
-
-        // if (this.props.isUpdate == true){
-        //     this.setState({
-        //         list:[...this.state.list, {name:this.props.selectedSong, status:"selected"}]
-        //     })
-        // }
     }
-
 
     state = {
-        list:[{name:this.props.songName, status:"selected"}]
+        list:[{name:this.props.selectedSong, artist:this.props.selectedArtist, status:"selected"}]
     }
 
-        // list:[...this.state.list, {name:this.props.selectedSong, status:"selected"}]
-        // list:[{name:{props.songName}, status:"decided1"},
-        //         {name:"song 2", status:"selected"},
-        //         {name:"song 3", status:"decided2"},
-        //         {name:"song 4", status:"decided3"}]
+    static getDerivedStateFromProps(props, state){
+        if (props.isUpdate === true){
+            return {list:[...state.list, {name:props.selectedSong, artist:props.selectedArtist, status:"selected"}]}
+        }
+    }
 
-    // handleUpdate=()=>{
-    //     if (this.props.isUpdate == true){
-    //         this.setState({
-    //             list:[...this.state.list, {name:this.props.selectedSong, status:"selected"}]
-    //         })
-    //     }
-    // }
-    
     handleDragStart=(e,name)=>{
         console.log(name)
         e.dataTransfer.setData("id", name)
@@ -76,7 +57,7 @@ class Dropzone extends React.Component{
                 onDragStart={(e)=>{this.handleDragStart(e, task.name)}}
                 key = {task.name}
                 draggable 
-                className="draggable">{task.name}</div>
+                className="draggable">{task.name} {task.artist}</div>
             )
         });
         return(

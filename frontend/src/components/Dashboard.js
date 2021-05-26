@@ -28,8 +28,8 @@ class Dashboard extends React.Component {
             isUpdate: false,
             preventSearchDisappear: false,
             searchAppear: false,
-            selectedSong : "song",
-            selectedArtist : "artist",
+            selectedSong : "",
+            selectedArtist : "",
             songID : "id",
         };
 
@@ -184,6 +184,7 @@ class Dashboard extends React.Component {
         console.log("handleMouseLeave is called");
         this.setState({
             preventSearchDisappear : false,
+            isUpdate:false
         }, this.checkSearch());
     }
 
@@ -242,7 +243,7 @@ class Dashboard extends React.Component {
                     </div>
 
                     <div>
-                    <Dropzone selectedSong = {this.state.selectedSong} selectedArtist = {this.state.selectedArtist} songID = {this.state.songID}/>
+                    <Dropzone selectedSong = {this.state.selectedSong} selectedArtist = {this.state.selectedArtist} songID = {this.state.songID} isUpdate = {this.state.isUpdate}/>
                     </div>
                     
                     <div className="results">
