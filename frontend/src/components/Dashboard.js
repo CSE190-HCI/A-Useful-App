@@ -63,7 +63,15 @@ class Dashboard extends React.Component {
      */
     addToBuckets = (songFeaturesObject, buckets, bucket) => {
         buckets[bucket].push(songFeaturesObject);
-        console.log(buckets);
+    };
+
+    /* 
+        A function to add a songFeaturesObject to the right bucket of the
+        underlying buckets model.
+     */
+    removeFromBuckets = (songFeaturesObject, buckets, bucket) => {
+        const index = buckets[bucket].indexOf(songFeaturesObject);
+        buckets[bucket].splice(index, 1);
     };
 
     /* 
@@ -80,7 +88,7 @@ class Dashboard extends React.Component {
         features of the song from Spotify, add to underlying buckets model,
         compute the widths, and update the bars UI.
     */
-    updateResultsBars = async (songId, bucketName) => {
+    updateResultsBars = async (songId, fromBucketName, toBucketName) => {
         console.log(
             "-----------------update results bars called---------------------"
         );
@@ -95,7 +103,12 @@ class Dashboard extends React.Component {
         });
 
         // update bucket, calculate base widths, and update results bars
-        this.addToBuckets(songFeatureObj, this.buckets, bucketName);
+        if(fromBucketName !== "selected") {
+            this.removeFromBuckets(songFeatureObj, this.buckets, fromBucketName);
+        }
+        if(toBucketName !== "selected") {
+            this.addToBuckets(songFeatureObj, this.buckets, toBucketName);
+        }
         this.setState({ targetAcc: calculateBaselines(this.buckets) });
         const songSuggestion = {};
         const featureRatios = computeWidthsForFeatures(
@@ -107,7 +120,7 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
         this.updateResultsItems(undefined);
-        this.updateResultsBars("5IEP2NdoJtkoThS0fkZmap", "positivity");
+        // this.updateResultsBars("5IEP2NdoJtkoThS0fkZmap", "positivity");
     }
 
     handleMouseEnterTestRecSong = (recSongFeaturesObject) => {
@@ -166,7 +179,7 @@ class Dashboard extends React.Component {
     fetchSearchResults = (query) => {
         const searchUrl = `https://api.spotify.com/v1/search?query=${encodeURIComponent(
             query
-        )}&type=album,playlist,artist`;
+        )}&type=track,artist`;
         if (this.cancel) {
             // Cancel the previous request before making a new request
             this.cancel.cancel();
@@ -234,10 +247,10 @@ class Dashboard extends React.Component {
     renderSearchResults = () => {
         if (
             Object.keys(this.state.results).length &&
-            this.state.results.albums.items.length
+            this.state.results.tracks.items.length
         ) {
             // get all songs
-            const songs = this.state.results.albums.items;
+            const songs = this.state.results.tracks.items;
 
             // create the search display items from each song
             const items = songs.map((song) => {

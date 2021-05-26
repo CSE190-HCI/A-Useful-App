@@ -76,6 +76,7 @@ class Dropzone extends React.Component {
         if (this.state.prev_status !== status) {
             this.props.update(
                 this.state.songID,
+                this.mapStatusToBucketName(this.state.prev_status),
                 this.mapStatusToBucketName(status)
             );
         }
