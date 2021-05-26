@@ -1,11 +1,11 @@
-.selected-container{
+.selected-container {
     margin-top: 400px;
-    margin-left: -950px;
-    /* position: absolute; */
+    margin-left: -33vw;
+    width: 33vw;
+    position: absolute;
 }
 
-.decided-container1{
-    margin-top: -450px;
+.decided-container1 {
     width: 33vw;
     display: flex;
     flex-direction: column;
@@ -13,7 +13,7 @@
     /* position: absolute; */
 }
 
-.decided-container2{
+.decided-container2 {
     width: 33vw;
     display: flex;
     flex-direction: column;
@@ -21,7 +21,7 @@
     /* position: absolute; */
 }
 
-.decided-container3{
+.decided-container3 {
     width: 33vw;
     display: flex;
     flex-direction: column;
