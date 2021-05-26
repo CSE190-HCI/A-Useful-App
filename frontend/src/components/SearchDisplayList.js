@@ -1,6 +1,5 @@
 import React from "react";
 import "../styles/SearchDisplayList.css";
-import Dropzone from "./Dropzone";
 
 class SearchDisplayList extends React.Component {
   render() {
@@ -14,21 +13,19 @@ class SearchDisplayList extends React.Component {
 }
 
 class SearchDisplayItem extends React.Component {
-  // state = {
-  //   selectedSong : "",
-  //   selectedArtist : "",
-  //   songID : "",
-  // }
 
-  handleUpdate = () => {
-    this.props.handleUpdate()
+  handleSelect = () => {
+    this.props.handleUpdate(this.props.songName, this.props.artist, this.props.id);
   };
-
-
 
   render() {
     return (
-      <div className="item-container" onClick = {this.handleUpdate}>
+      <div
+        className="item-container"
+        onClick={this.handleSelect}
+        onMouseEnter={this.props.handleMouseEnter}
+        onMouseLeave={this.props.handleMouseLeave}
+      >
         <label className="song-name"> { this.props.songName } </label>
         <label className="artist"> { this.props.artist } </label>
       </div>
