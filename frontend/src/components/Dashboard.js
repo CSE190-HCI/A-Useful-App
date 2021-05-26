@@ -35,9 +35,9 @@ class Dashboard extends React.Component {
             isUpdate: false,
             preventSearchDisappear: false,
             searchAppear: false,
-            selectedSong: "song",
-            selectedArtist: "artist",
-            songID: "id",
+            selectedSong: "",
+            selectedArtist: "",
+            songID: "",
 
             resultsItems: [],
             targetAcc: {},
@@ -47,26 +47,44 @@ class Dashboard extends React.Component {
     }
 
     buckets = {
-        energy: [{ energy: 0.85, instrumentalness: 0.45, positivity: 0.75 }],
+        energy: [
+            // { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 }
+        ],
         instrumentalness: [],
         positivity: [
-            { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
-            { energy: 0.26, instrumentalness: 0.45, positivity: 0.36 },
+            // { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
+            // { energy: 0.26, instrumentalness: 0.45, positivity: 0.36 },
         ],
     };
 
-    /* When a song gets dragged into a bucket, add songFeaturesObject to the right bucket
-       in buckets[], then call computeWidthsForFeatures
+    /* 
+        A function to add a songFeaturesObject to the right bucket of the
+        underlying buckets model.
      */
     addToBuckets = (songFeaturesObject, buckets, bucket) => {
         buckets[bucket].push(songFeaturesObject);
+        console.log(buckets);
     };
 
+    /* 
+        A wrapper function just for setting the resultsItems state in order
+        to update the results bar UI and render the bars correctly.
+    */
     updateResultsItems = (featureRatios) => {
         this.setState({ resultsItems: returnResultsItems(featureRatios) });
     };
 
+    /*
+        Called when a song is added to a bucket. Given the newly added song
+        id and the name of the bucket/feature it got dragged into, get the
+        features of the song from Spotify, add to underlying buckets model,
+        compute the widths, and update the bars UI.
+    */
     updateResultsBars = async (songId, bucketName) => {
+        console.log(
+            "-----------------update results bars called---------------------"
+        );
+        console.log(songId);
         // get features from a new song
         const songFeatureObj = await createSongFeaturesObject(
             songId,
@@ -89,7 +107,7 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
         this.updateResultsItems(undefined);
-        this.updateResultsBars("53nhbx7yp4TJEpmMBCLWPQ", "positivity");
+        this.updateResultsBars("5IEP2NdoJtkoThS0fkZmap", "positivity");
     }
 
     handleMouseEnterTestRecSong = (recSongFeaturesObject) => {
@@ -218,7 +236,7 @@ class Dashboard extends React.Component {
             Object.keys(this.state.results).length &&
             this.state.results.albums.items.length
         ) {
-            // get the first three songs
+            // get all songs
             const songs = this.state.results.albums.items;
 
             // create the search display items from each song
@@ -277,6 +295,7 @@ class Dashboard extends React.Component {
                             selectedArtist={this.state.selectedArtist}
                             songID={this.state.songID}
                             isUpdate={this.state.isUpdate}
+                            update={this.updateResultsBars}
                         />
                     </div>
 

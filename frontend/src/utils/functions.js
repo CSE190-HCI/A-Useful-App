@@ -130,7 +130,16 @@ export const createSongFeaturesObject = async (songId, cancel) => {
 
 export const returnResultsItems = (featureRatios) => {
     console.log(featureRatios);
-    if (!featureRatios) return <></>;
+    if (
+        !featureRatios ||
+        !featureRatios.energy ||
+        !featureRatios.instrumentalness ||
+        !featureRatios.positivity ||
+        !featureRatios.energy.baseWidth ||
+        !featureRatios.instrumentalness.baseWidth ||
+        !featureRatios.positivity.baseWidth
+    )
+        return <></>;
     return [
         featureRatios.energy.baseWidth == "0%" ? (
             <></>

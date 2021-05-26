@@ -13,9 +13,12 @@ class Dropzone extends React.Component {
             {
                 name: this.props.selectedSong,
                 artist: this.props.selectedArtist,
+                songID: this.props.songID,
                 status: "selected",
             },
         ],
+        prev_status: "",
+        songID: "",
     };
 
     static getDerivedStateFromProps(props, state) {
@@ -26,6 +29,7 @@ class Dropzone extends React.Component {
                     {
                         name: props.selectedSong,
                         artist: props.selectedArtist,
+                        songID: props.songID,
                         status: "selected",
                     },
                 ],
@@ -33,18 +37,52 @@ class Dropzone extends React.Component {
         }
     }
 
-    handleDragStart = (e, name) => {
+    handleDragStart = (e, name, songID, status) => {
         console.log(name);
         e.dataTransfer.setData("id", name);
+
+        this.setState({
+            prev_status: status,
+            songID: songID,
+        });
     };
 
     handleDragOver = (e) => {
         e.preventDefault();
     };
 
+    mapStatusToBucketName = (status) => {
+        let bucketName = "selected";
+        switch (status) {
+            case "decided1":
+                bucketName = "energy";
+                break;
+            case "decided2":
+                bucketName = "instrumentalness";
+                break;
+            case "decided3":
+                bucketName = "positivity";
+                break;
+            default:
+                break;
+        }
+        return bucketName;
+    };
+
     handleOnDrop = (e, status) => {
+        console.log(
+            `before status was ${this.state.prev_status} and is now ${status}`
+        );
+        if (this.state.prev_status !== status) {
+            this.props.update(
+                this.state.songID,
+                this.mapStatusToBucketName(status)
+            );
+        }
+
         let id = e.dataTransfer.getData("id");
         console.log(this.state.list);
+
         let list = this.state.list.filter((task) => {
             if (task.name === id) {
                 task.status = status;
@@ -65,13 +103,20 @@ class Dropzone extends React.Component {
             selected: [],
         };
 
+        console.log(obj);
+
         this.state.list.forEach((task) => {
             obj[task.status].push(
                 <div
                     onDragStart={(e) => {
-                        this.handleDragStart(e, task.name);
+                        this.handleDragStart(
+                            e,
+                            task.name,
+                            task.songID,
+                            task.status
+                        );
                     }}
-                    key={task.name}
+                    key={task.songID}
                     draggable
                     className="draggable"
                 >
@@ -114,7 +159,7 @@ class Dropzone extends React.Component {
                     onDrop={(e) => this.handleOnDrop(e, "decided3")}
                     className="decided-container3"
                 >
-                    <FeatureCard feature="Mood" list={obj.decided3} />
+                    <FeatureCard feature="Positivity" list={obj.decided3} />
                 </div>
             </div>
         );
