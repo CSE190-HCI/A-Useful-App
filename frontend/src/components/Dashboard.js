@@ -47,36 +47,35 @@ class Dashboard extends React.Component {
     }
 
     buckets = {
-        energy: [
-            { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 },
-        ],
+        energy: [{ energy: 0.85, instrumentalness: 0.45, positivity: 0.75 }],
         instrumentalness: [],
         positivity: [
             { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
             { energy: 0.26, instrumentalness: 0.45, positivity: 0.36 },
         ],
-    }
-    
+    };
+
     /* When a song gets dragged into a bucket, add songFeaturesObject to the right bucket
        in buckets[], then call computeWidthsForFeatures
      */
     addToBuckets = (songFeaturesObject, buckets, bucket) => {
         buckets[bucket].push(songFeaturesObject);
-    }
+    };
 
     updateResultsItems = (featureRatios) => {
-        this.setState({ resultsItems: returnResultsItems(featureRatios) })
-    }
+        this.setState({ resultsItems: returnResultsItems(featureRatios) });
+    };
 
     updateResultsBars = async (songId, bucketName) => {
         // get features from a new song
         const songFeatureObj = await createSongFeaturesObject(
-            songId, this.state.cancel
-            ).then((res) => {
-                this.setState({ loading: false });
-                return res;
-            });
-        
+            songId,
+            this.state.cancel
+        ).then((res) => {
+            this.setState({ loading: false });
+            return res;
+        });
+
         // update bucket, calculate base widths, and update results bars
         this.addToBuckets(songFeatureObj, this.buckets, bucketName);
         this.setState({ targetAcc: calculateBaselines(this.buckets) });
@@ -86,7 +85,7 @@ class Dashboard extends React.Component {
             songSuggestion
         );
         this.updateResultsItems(featureRatios);
-    }    
+    };
 
     componentDidMount() {
         this.updateResultsItems(undefined);
@@ -99,7 +98,7 @@ class Dashboard extends React.Component {
             recSongFeaturesObject
         );
         this.updateResultsItems(featureRatios);
-    }
+    };
 
     handleMouseLeaveTestRecSong = () => {
         const featureRatios = computeWidthsForFeatures(
@@ -107,7 +106,7 @@ class Dashboard extends React.Component {
             {}
         );
         this.updateResultsItems(featureRatios);
-    }
+    };
 
     // TODO: maybe delete this if don't need it
     handleFocus = (e) => {
@@ -208,6 +207,7 @@ class Dashboard extends React.Component {
         this.setState(
             {
                 preventSearchDisappear: false,
+                isUpdate: false,
             },
             this.checkSearch()
         );
@@ -276,6 +276,7 @@ class Dashboard extends React.Component {
                             selectedSong={this.state.selectedSong}
                             selectedArtist={this.state.selectedArtist}
                             songID={this.state.songID}
+                            isUpdate={this.state.isUpdate}
                         />
                     </div>
 
@@ -310,7 +311,6 @@ class Dashboard extends React.Component {
                             handleMouseEnter={this.handleMouseEnterTestRecSong}
                             handleMouseLeave={this.handleMouseLeaveTestRecSong}
                         />
-
                     </div>
                 </header>
             </div>

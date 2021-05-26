@@ -125,47 +125,56 @@ export const createSongFeaturesObject = async (songId, cancel) => {
                     console.log("Failed to fetch results.Please check network");
                 }
             });
-    })
+    });
 };
 
 export const returnResultsItems = (featureRatios) => {
     console.log(featureRatios);
-    if(!featureRatios) return <></>;
+    if (!featureRatios) return <></>;
     return [
-        featureRatios.energy.baseWidth == "0%" ? <></> :
+        featureRatios.energy.baseWidth == "0%" ? (
+            <></>
+        ) : (
             <ResultsItem
                 feature="Energy"
                 bar={<TotalBar widths={featureRatios.energy} />}
-            />,
-        featureRatios.instrumentalness.baseWidth == "0%" ? <></> :
+            />
+        ),
+        featureRatios.instrumentalness.baseWidth == "0%" ? (
+            <></>
+        ) : (
             <ResultsItem
                 feature="Instrumentalness"
                 bar={<TotalBar widths={featureRatios.instrumentalness} />}
-            />,
-        featureRatios.positivity.baseWidth == "0%" ? <></> :
+            />
+        ),
+        featureRatios.positivity.baseWidth == "0%" ? (
+            <></>
+        ) : (
             <ResultsItem
                 feature="Positivity"
                 bar={<TotalBar widths={featureRatios.positivity} />}
-            />,
+            />
+        ),
     ];
-}
+};
 
 const calculateBaseline = (bucketName, bucket) => {
-    if(bucket.length === 0) return 0;
+    if (bucket.length === 0) return 0;
 
     let sum = bucket.reduce((a, b) => {
         return a + b[bucketName];
     }, 0);
 
     return sum / bucket.length;
-}
+};
 
 export const calculateBaselines = (buckets) => {
     let baselines = {};
-    for(let bucket of Object.entries(buckets)) {
+    for (let bucket of Object.entries(buckets)) {
         const bucketName = bucket[0];
-        let baseline = baselines[bucketName] = calculateBaseline(...bucket);
+        let baseline = (baselines[bucketName] = calculateBaseline(...bucket));
         baselines[bucketName] = baseline;
     }
     return baselines;
-}
+};
