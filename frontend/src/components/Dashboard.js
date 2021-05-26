@@ -1,9 +1,9 @@
 import React from "react";
 
-import FeatureCard from "./FeatureCard";
 import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
 import { ResultsList, ResultsItem, TotalBar } from "./ResultsList";
+import RecomSongs from "./RecomSongs";
 
 import "../styles/Dashboard.css";
 import Dropzone from "./Dropzone";
@@ -41,6 +41,22 @@ class Dashboard extends React.Component {
 
             resultsItems: [],
             targetAcc: {},
+
+            // switch between FeatureCards and RecomSongs
+            active: "CARDS",
+
+            // update this from backend recommendations
+            // TODO: content filled with sample data
+            recomSongIds: [
+                "52kvZcbEDm0v2kWZQXjuuA",
+                "2V3H7K7plyYRjKzAoDK3SK",
+                "52kvZcbEDm0v2kWZQXjuuA",
+                "2V3H7K7plyYRjKzAoDK3SK",
+                "52kvZcbEDm0v2kWZQXjuuA",
+                "2V3H7K7plyYRjKzAoDK3SK",
+                "52kvZcbEDm0v2kWZQXjuuA",
+                "2V3H7K7plyYRjKzAoDK3SK"
+                ]
         };
 
         this.cancel = "";
@@ -165,6 +181,10 @@ class Dashboard extends React.Component {
             this.setState({ searchAppear: false });
     };
 
+    /*
+        Called when user enters anything into the search bar, will call fetchSearchResults
+        to interact with spotify API
+    */
     handleOnInputChange = (e) => {
         const query = e.target.value;
         if (!query) {
@@ -175,7 +195,9 @@ class Dashboard extends React.Component {
             });
         }
     };
-
+    /*
+        Called to fetch search results from spotify API
+    */
     fetchSearchResults = (query) => {
         const searchUrl = `https://api.spotify.com/v1/search?query=${encodeURIComponent(
             query
@@ -278,7 +300,20 @@ class Dashboard extends React.Component {
         }
     };
 
+    /*
+        Called to see the recommended songs and go back to feature cards
+    */
+    handleOnGoNBack = () => {
+        var active = this.state.active;
+        var newActive = active === 'CARDS' ? 'SONGS' : 'CARDS';
+        this.setState({
+            active: newActive
+        });
+    }
+
     render() {
+        var active = this.state.active;
+
         return (
             <div>
                 <header className="App-header">
@@ -303,13 +338,20 @@ class Dashboard extends React.Component {
                     </div>
 
                     <div>
-                        <Dropzone
+                        {active === "CARDS" ? (
+                            <Dropzone
                             selectedSong={this.state.selectedSong}
                             selectedArtist={this.state.selectedArtist}
                             songID={this.state.songID}
                             isUpdate={this.state.isUpdate}
                             update={this.updateResultsBars}
                         />
+                        ) : active === "SONGS" ? (
+                            <RecomSongs
+                            recomSongIds={this.state.recomSongIds}/>
+                        ) : null}
+                       
+                        
                     </div>
 
                     <div className="results">
@@ -343,6 +385,12 @@ class Dashboard extends React.Component {
                             handleMouseEnter={this.handleMouseEnterTestRecSong}
                             handleMouseLeave={this.handleMouseLeaveTestRecSong}
                         />
+                        <button type="button" onClick={this.handleOnGoNBack}>{active === "CARDS" ? (
+                            <div>Go</div>
+                        ) : active === "SONGS" ? (
+                            <div>Back</div>
+                        ) : null}</button>
+                        
                     </div>
                 </header>
             </div>
