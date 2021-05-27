@@ -199,7 +199,7 @@ export const hasSongList = (list, song) => {
 export const hasSongComponentsList = (list, songID) => {
     if(!list || !songID) return false;
     for(const component of list) {
-        if(component._self.props.songID == songID) return true;
+        if(component.key == songID) return true;
     }
     return false;
 }

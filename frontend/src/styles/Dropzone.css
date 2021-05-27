@@ -3,6 +3,7 @@
     margin-left: -33vw;
     width: 33vw;
     position: absolute;
+    z-index: 0;
 }
 
 .decided-container1 {

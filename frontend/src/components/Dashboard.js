@@ -89,10 +89,6 @@ class Dashboard extends React.Component {
         compute the widths, and update the bars UI.
     */
     updateResultsBars = async (songId, fromBucketName, toBucketName) => {
-        console.log(
-            "-----------------update results bars called---------------------"
-        );
-        console.log(songId);
         // get features from a new song
         const songFeatureObj = await createSongFeaturesObject(
             songId,

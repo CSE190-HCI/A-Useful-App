@@ -1,7 +1,6 @@
 import React from "react";
 import "../styles/Dropzone.css";
 import FeatureCard from "./FeatureCard";
-import SearchDisplayItem from "./SearchDisplayList";
 import { hasSongList, hasSongComponentsList } from "../utils/functions.js";
 
 class Dropzone extends React.Component {
@@ -11,12 +10,12 @@ class Dropzone extends React.Component {
 
     state = {
         list: [
-            {
-                name: this.props.selectedSong,
-                artist: this.props.selectedArtist,
-                songID: this.props.songID,
-                status: "selected",
-            },
+            // {
+            //     name: this.props.selectedSong,
+            //     artist: this.props.selectedArtist,
+            //     songID: this.props.songID,
+            //     status: "selected",
+            // },
         ],
         prev_status: "",
         songID: "",
@@ -143,27 +142,26 @@ class Dropzone extends React.Component {
             selected: [],
         };
 
-        console.log(obj);
-
         this.state.list.forEach((task) => {
             obj[task.status].push(
                 <div
-                    onDragStart={(e) => {
-                        this.handleDragStart(
+                onDragStart={(e) => {
+                    this.handleDragStart(
                             e,
                             task.name,
                             task.songID,
                             task.status
-                        );
+                            );
                     }}
                     key={task.songID}
                     draggable
                     className="draggable"
-                >
+                    >
                     {task.name} {task.artist}
                 </div>
-            );
+            );            
         });
+
         return (
             <div>
                 <div
