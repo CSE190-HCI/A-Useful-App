@@ -117,8 +117,10 @@ class Dropzone extends React.Component {
             if (task.name === id && task.status === this.state.prev_status) {
                 if(this.state.prev_status === "selected") {
                     cloneTask = JSON.parse(JSON.stringify(task));
+                    cloneTask.status = status;
+                } else {
+                    task.status = status;
                 }
-                task.status = status;
             }
             return task;
         });
