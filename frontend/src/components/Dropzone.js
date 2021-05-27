@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/Dropzone.css";
 import FeatureCard from "./FeatureCard";
+import DragDropSongItem from "./DragDropSongItem";
 import { hasSongList, hasSongComponentsList } from "../utils/functions.js";
 
 class Dropzone extends React.Component {
@@ -73,25 +74,27 @@ class Dropzone extends React.Component {
         return bucketName;
     };
 
+    deleteSong = (list, status) => {
+        /* delete from and update list */
+        let newList = list.filter(song => {
+            return !(song.songID === this.state.songID && song.status === this.state.prev_status);
+        });
+        this.setState({
+            list: newList
+        });
+
+        /* update dashboard's underlying buckets model */
+        this.props.update(
+            this.state.songID,
+            this.mapStatusToBucketName(this.state.prev_status),
+            this.mapStatusToBucketName(status)
+        );
+    }
+
     handleOnDrop = (e, status, componentsList) => {
         /* if drag from any non-selected bucket to selected, delete */
         if(this.state.prev_status !== "selected" && status === "selected") {
-
-            /* delete from and update list */
-            let list = this.state.list.filter(song => {
-                return !(song.songID === this.state.songID && song.status === this.state.prev_status);
-            });
-            this.setState({
-                list: list
-            });
-
-            /* update dashboard's underlying buckets model */
-            this.props.update(
-                this.state.songID,
-                this.mapStatusToBucketName(this.state.prev_status),
-                this.mapStatusToBucketName(status)
-            );
-
+            this.deleteSong(this.state.list, status);
             return;
         }
         
@@ -136,6 +139,17 @@ class Dropzone extends React.Component {
         }
     };
 
+    handleDelete = (e, status) => {
+        this.deleteSong(this.state.list, status);
+    }
+
+    handleMouseOver = (e, status, songID) => {
+        this.setState({
+            songID: songID,
+            prev_status: status,
+        });
+    }
+
     render() {
         let obj = {
             decided1: [],
@@ -146,21 +160,15 @@ class Dropzone extends React.Component {
 
         this.state.list.forEach((task) => {
             obj[task.status].push(
-                <div
-                onDragStart={(e) => {
-                    this.handleDragStart(
-                            e,
-                            task.name,
-                            task.songID,
-                            task.status
-                            );
-                    }}
-                    key={task.songID}
-                    draggable
-                    className="draggable"
-                    >
-                    {task.name} {task.artist}
-                </div>
+                <DragDropSongItem
+                    name={task.name}
+                    artist={task.artist}
+                    songID={task.songID}
+                    status={task.status}
+                    handleDragStart={this.handleDragStart}
+                    handleDelete={(e) => this.handleDelete(e, task.status)}
+                    handleMouseOver={(e) => this.handleMouseOver(e, task.status, task.songID)}
+                />
             );            
         });
 

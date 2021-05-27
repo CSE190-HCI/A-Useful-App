@@ -197,9 +197,10 @@ export const hasSongList = (list, song) => {
 }
 
 export const hasSongComponentsList = (list, songID) => {
+    console.log(list);
     if(!list || !songID) return false;
     for(const component of list) {
-        if(component.key == songID) return true;
+        if(component.props.songID == songID) return true;
     }
     return false;
 }

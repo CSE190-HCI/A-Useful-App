@@ -29,3 +29,15 @@
     justify-content: center;
     /* position: absolute; */
 }
+
+.decided-container1 p, .decided-container2 p, .decided-container3 p {
+    margin: 2% 0px 0px 0px;
+}
+
+.song-list {
+    padding: 0px 2% 0px 2%;
+}
+
+.decided1, .decided2, .decided3 {
+    margin: 2% 0px 2% 0px;
+}

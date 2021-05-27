@@ -1,0 +1,65 @@
+/* . {
+    background-color: green;
+} */
+
+.selected {
+    justify-content: space-evenly;
+    padding: 7px 0px 7px 10px;
+    border-bottom: 1px solid lightgray;
+}
+
+.drag-song-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.drag-song-labels {
+    display: flex;
+    flex-direction: column;
+}
+
+.drag-song-name {
+    text-align: left;
+    font-size: 75%;
+}
+
+.drag-artist {
+    text-align: left;
+    font-size: 50%;
+    color: lightgray;
+}
+
+.decided1 .drag-artist, .decided2 .drag-artist, .decided3 .drag-artist {
+    color: #585858;
+}
+
+.decided1 .drag-song-name, .decided2 .drag-song-name, .decided3 .drag-song-name {
+    color: #222222;
+}
+
+.drag-song-delete-btn-container {
+    width: 15%;
+    padding: 0px;
+    display: flex;
+    justify-content: center;
+}
+
+.drag-song-delete-btn {
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    background-color: #e23333;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+    border: none;
+}
+
+.drag-song-delete-btn:hover {
+    background-color: #e66060;
+}
+
+.drag-song-delete-btn:active {
+    background-color: #be1414;
+}

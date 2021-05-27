@@ -14,12 +14,7 @@ Notes:  - The container width is sized by .text-field.
     display: flex;
     flex-direction: column;
     background-color: rgb(228, 228, 228);
-
-/*     margin: 10px; */
-    /* position: absolute; */
-
     margin: 1vh 10px 1vh 10px;
-
 }
 
 /* Feature header */
@@ -40,9 +35,9 @@ Notes:  - The container width is sized by .text-field.
 
 .song {
     display: flex;
+    flex-direction: column;
     justify-content: left;
-    margin-left: 15px;
-    /* position: absolute; */
+    /* margin-left: 15px; */
 }
 
 .song p {
@@ -50,7 +45,6 @@ Notes:  - The container width is sized by .text-field.
     font-weight: bold;
     color: darkslategray;
     margin: 15px 0px 0px 0px;
-    /* position: fixed; */
 }
 
 
