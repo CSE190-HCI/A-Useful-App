@@ -7,7 +7,7 @@ def create_app():
   return app
 
 
-lient_cred = SpotifyClientCredentials(client_id=credentials.SPOTIPY_CLIENT_ID, \
+client_cred = SpotifyClientCredentials(client_id=credentials.SPOTIPY_CLIENT_ID, \
                                        client_secret=credentials.SPOTIPY_CLIENT_SECRET)
 spotify = spotipy.Spotify(client_credentials_manager=client_cred)
 
