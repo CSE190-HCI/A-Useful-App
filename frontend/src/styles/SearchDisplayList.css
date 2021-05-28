@@ -1,13 +1,13 @@
 /* Main feature card */
 
 .list-container {
-    /* TODO: may have to delete position prop */
     position: absolute;
     display: flex;
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.75);
-    height: 700px;
+    height: 33vh;
     overflow: auto;
+    z-index: 1;
 }
 
 /* Search result item */

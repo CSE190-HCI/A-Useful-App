@@ -16,7 +16,10 @@ class FeatureCard extends React.Component {
 
                 {/* Songs text label */}
                 <div className="song">
-                    <p>Songs: {this.props.list}</p>
+                    <p>Songs:</p>
+                    <div className="song-list">
+                        {this.props.list}
+                    </div>
                 </div>
             </div>
         );

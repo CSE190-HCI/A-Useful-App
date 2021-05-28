@@ -187,3 +187,20 @@ export const calculateBaselines = (buckets) => {
     }
     return baselines;
 };
+
+export const hasSongList = (list, song) => {
+    if(!list || !song) return false;
+    for(const listSong of list) {
+        if(listSong.songID == song.songID) return true;
+    }
+    return false;
+}
+
+export const hasSongComponentsList = (list, songID) => {
+    console.log(list);
+    if(!list || !songID) return false;
+    for(const component of list) {
+        if(component.props.songID == songID) return true;
+    }
+    return false;
+}
