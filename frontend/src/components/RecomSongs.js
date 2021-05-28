@@ -32,7 +32,7 @@ class RecomSongs extends React.Component {
         return (
 				<div className="song-container">
 				 	{this.state.recomSongs.map((item,i) => 
-				 		<div className="cell">
+				 		<div className="cell" key={i}>
 				 			<img src={item.image} alt={item.name} />
 							<div className="name">{item.name}</div>
 						</div> ) }

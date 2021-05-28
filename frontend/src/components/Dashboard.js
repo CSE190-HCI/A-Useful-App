@@ -304,6 +304,7 @@ class Dashboard extends React.Component {
         Called to see the recommended songs and go back to feature cards
     */
     handleOnGoNBack = () => {
+        console.log(this.state.resultsItems);
         var active = this.state.active;
         var newActive = active === 'CARDS' ? 'SONGS' : 'CARDS';
         this.setState({

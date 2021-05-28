@@ -38,7 +38,7 @@ class Dropzone extends React.Component {
     }
 
     handleDragStart = (e, name, songID, status) => {
-        console.log(name);
+        // console.log(name);
         e.dataTransfer.setData("id", name);
 
         this.setState({
@@ -82,7 +82,7 @@ class Dropzone extends React.Component {
         }
 
         let id = e.dataTransfer.getData("id");
-        console.log(this.state.list);
+        // console.log(this.state.list);
 
         let list = this.state.list.filter((task) => {
             if (task.name === id) {
@@ -104,7 +104,7 @@ class Dropzone extends React.Component {
             selected: [],
         };
 
-        console.log(obj);
+        // console.log(obj);
 
         this.state.list.forEach((task) => {
             obj[task.status].push(

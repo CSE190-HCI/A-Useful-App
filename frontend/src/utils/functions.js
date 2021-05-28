@@ -129,7 +129,7 @@ export const createSongFeaturesObject = async (songId, cancel) => {
 };
 
 export const returnResultsItems = (featureRatios) => {
-    console.log(featureRatios);
+    // console.log(featureRatios);
     if (
         !featureRatios ||
         !featureRatios.energy ||
