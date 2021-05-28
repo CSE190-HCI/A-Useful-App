@@ -76,17 +76,13 @@ const calculateEnergy = (audioFeatures) => {
 };
 const calculateInstrumentalness = (audioFeatures) => {
     const average =
-        (audioFeatures.instrumentalness +
-            audioFeatures.speechiness +
-            audioFeatures.liveness +
-            audioFeatures.acousticness) /
-        4;
+        (audioFeatures.instrumentalness + (1 - audioFeatures.speechiness)) / 2;
     return average;
 };
 const calculatePositivity = (audioFeatures) => {
     console.log("calculatePositivity called");
     const average =
-        (audioFeatures.valence * 0.8 + audioFeatures.mode * 0.2) / 2;
+        (audioFeatures.valence * 0.5 + audioFeatures.mode * 0.5) / 2;
     return average;
 };
 
@@ -189,18 +185,53 @@ export const calculateBaselines = (buckets) => {
 };
 
 export const hasSongList = (list, song) => {
-    if(!list || !song) return false;
-    for(const listSong of list) {
-        if(listSong.songID == song.songID) return true;
+    if (!list || !song) return false;
+    for (const listSong of list) {
+        if (listSong.songID == song.songID) return true;
     }
     return false;
-}
+};
 
 export const hasSongComponentsList = (list, songID) => {
     console.log(list);
-    if(!list || !songID) return false;
-    for(const component of list) {
-        if(component.props.songID == songID) return true;
+    if (!list || !songID) return false;
+    for (const component of list) {
+        if (component.props.songID == songID) return true;
     }
     return false;
-}
+};
+
+export const selectInfoMessage = (containerName) => {
+    let message = "Hover over something to get more info";
+    switch (containerName) {
+        case "decided-container1":
+            message = "energy tells how hype the song is";
+            break;
+        case "decided-container2":
+            message = "instrumentalness tells how many instruments there are";
+            break;
+        case "decided-container3":
+            message = "positivity is how happy the song is";
+            break;
+    }
+    console.log(message);
+    return message;
+};
+
+export const mapStatusToBucketName = (status) => {
+    let bucketName = "selected";
+    switch (status) {
+        case "decided1":
+            bucketName = "energy";
+            break;
+        case "decided2":
+            bucketName = "instrumentalness";
+            break;
+        case "decided3":
+            bucketName = "positivity";
+            break;
+        default:
+            break;
+    }
+    return bucketName;
+};

@@ -4,6 +4,7 @@ import FeatureCard from "./FeatureCard";
 import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
 import { ResultsList, ResultsItem, TotalBar } from "./ResultsList";
+import InfoBox from "./InfoBox";
 
 import "../styles/Dashboard.css";
 import Dropzone from "./Dropzone";
@@ -26,21 +27,24 @@ class Dashboard extends React.Component {
             results: {},
             loading: false,
             message: "",
-            // just for where to put the search results
+
             searchStyle: {
                 top: 0,
                 left: 0,
                 width: 0,
             },
-            isUpdate: false,
             preventSearchDisappear: false,
             searchAppear: false,
+
+            isUpdate: false,
             selectedSong: "",
             selectedArtist: "",
             songID: "",
 
             resultsItems: [],
             targetAcc: {},
+
+            infoMessage: "",
         };
 
         this.cancel = "";
@@ -99,10 +103,14 @@ class Dashboard extends React.Component {
         });
 
         // update bucket, calculate base widths, and update results bars
-        if(fromBucketName !== "selected") {
-            this.removeFromBuckets(songFeatureObj, this.buckets, fromBucketName);
+        if (fromBucketName !== "selected") {
+            this.removeFromBuckets(
+                songFeatureObj,
+                this.buckets,
+                fromBucketName
+            );
         }
-        if(toBucketName !== "selected") {
+        if (toBucketName !== "selected") {
             this.addToBuckets(songFeatureObj, this.buckets, toBucketName);
         }
         this.setState({ targetAcc: calculateBaselines(this.buckets) });
@@ -116,7 +124,6 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
         this.updateResultsItems(undefined);
-        // this.updateResultsBars("5IEP2NdoJtkoThS0fkZmap", "positivity");
     }
 
     handleMouseEnterTestRecSong = (recSongFeaturesObject) => {
@@ -274,6 +281,12 @@ class Dashboard extends React.Component {
         }
     };
 
+    handleMouseEnterInfoMessage = (infoMessage) => {
+        this.setState({
+            infoMessage: infoMessage,
+        });
+    };
+
     render() {
         return (
             <div>
@@ -305,6 +318,7 @@ class Dashboard extends React.Component {
                             songID={this.state.songID}
                             isUpdate={this.state.isUpdate}
                             update={this.updateResultsBars}
+                            infoFunction={this.handleMouseEnterInfoMessage}
                         />
                     </div>
 
@@ -339,6 +353,7 @@ class Dashboard extends React.Component {
                             handleMouseEnter={this.handleMouseEnterTestRecSong}
                             handleMouseLeave={this.handleMouseLeaveTestRecSong}
                         />
+                        <InfoBox infoMessage={this.state.infoMessage}></InfoBox>
                     </div>
                 </header>
             </div>

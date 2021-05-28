@@ -2,7 +2,12 @@ import React from "react";
 import "../styles/Dropzone.css";
 import FeatureCard from "./FeatureCard";
 import DragDropSongItem from "./DragDropSongItem";
-import { hasSongList, hasSongComponentsList } from "../utils/functions.js";
+import {
+    hasSongList,
+    hasSongComponentsList,
+    mapStatusToBucketName,
+    selectInfoMessage,
+} from "../utils/functions.js";
 
 class Dropzone extends React.Component {
     constructor(props) {
@@ -10,14 +15,7 @@ class Dropzone extends React.Component {
     }
 
     state = {
-        list: [
-            // {
-            //     name: this.props.selectedSong,
-            //     artist: this.props.selectedArtist,
-            //     songID: this.props.songID,
-            //     status: "selected",
-            // },
-        ],
+        list: [],
         prev_status: "",
         songID: "",
     };
@@ -30,14 +28,11 @@ class Dropzone extends React.Component {
             status: "selected",
         };
 
-        if(hasSongList(state.list, newSong)) return state.list;
+        if (hasSongList(state.list, newSong)) return state.list;
 
         if (props.isUpdate === true) {
             return {
-                list: [
-                    ...state.list,
-                    newSong,
-                ],
+                list: [...state.list, newSong],
             };
         }
     }
@@ -56,57 +51,42 @@ class Dropzone extends React.Component {
         e.preventDefault();
     };
 
-    mapStatusToBucketName = (status) => {
-        let bucketName = "selected";
-        switch (status) {
-            case "decided1":
-                bucketName = "energy";
-                break;
-            case "decided2":
-                bucketName = "instrumentalness";
-                break;
-            case "decided3":
-                bucketName = "positivity";
-                break;
-            default:
-                break;
-        }
-        return bucketName;
-    };
-
     deleteSong = (list, status) => {
         /* delete from and update list */
-        let newList = list.filter(song => {
-            return !(song.songID === this.state.songID && song.status === this.state.prev_status);
+        let newList = list.filter((song) => {
+            return !(
+                song.songID === this.state.songID &&
+                song.status === this.state.prev_status
+            );
         });
         this.setState({
-            list: newList
+            list: newList,
         });
 
         /* update dashboard's underlying buckets model */
         this.props.update(
             this.state.songID,
-            this.mapStatusToBucketName(this.state.prev_status),
-            this.mapStatusToBucketName(status)
+            mapStatusToBucketName(this.state.prev_status),
+            mapStatusToBucketName(status)
         );
-    }
+    };
 
     handleOnDrop = (e, status, componentsList) => {
         /* if drag from any non-selected bucket to selected, delete */
-        if(this.state.prev_status !== "selected" && status === "selected") {
+        if (this.state.prev_status !== "selected" && status === "selected") {
             this.deleteSong(this.state.list, status);
             return;
         }
-        
+
         /* otherwise, avoid duplicate songs in each bucket, including selected */
-        if(hasSongComponentsList(componentsList, this.state.songID)) return;
+        if (hasSongComponentsList(componentsList, this.state.songID)) return;
 
         /* update dashboard's underlying buckets model */
         if (this.state.prev_status !== status) {
             this.props.update(
                 this.state.songID,
-                this.mapStatusToBucketName(this.state.prev_status),
-                this.mapStatusToBucketName(status)
+                mapStatusToBucketName(this.state.prev_status),
+                mapStatusToBucketName(status)
             );
         }
 
@@ -114,11 +94,11 @@ class Dropzone extends React.Component {
         console.log(this.state.list);
 
         let cloneTask = undefined;
-        
+
         let list = this.state.list.filter((task) => {
             /* Identify songs by name and status */
             if (task.name === id && task.status === this.state.prev_status) {
-                if(this.state.prev_status === "selected") {
+                if (this.state.prev_status === "selected") {
                     cloneTask = JSON.parse(JSON.stringify(task));
                     cloneTask.status = status;
                 } else {
@@ -128,27 +108,35 @@ class Dropzone extends React.Component {
             return task;
         });
 
-        if(cloneTask) {
+        if (cloneTask) {
             this.setState({
                 list: [...list, cloneTask],
             });
         } else {
             this.setState({
-                list: list
+                list: list,
             });
         }
     };
 
     handleDelete = (e, status) => {
         this.deleteSong(this.state.list, status);
-    }
+    };
 
-    handleMouseOver = (e, status, songID) => {
+    handleMouseOverForDelete = (e, status, songID) => {
         this.setState({
             songID: songID,
             prev_status: status,
         });
-    }
+    };
+
+    handleMouseEnterInfo = (e) => {
+        this.props.infoFunction(selectInfoMessage(e.target.className));
+    };
+
+    handleMouseLeaveInfo = (e) => {
+        console.log(e);
+    };
 
     render() {
         let obj = {
@@ -167,25 +155,37 @@ class Dropzone extends React.Component {
                     status={task.status}
                     handleDragStart={this.handleDragStart}
                     handleDelete={(e) => this.handleDelete(e, task.status)}
-                    handleMouseOver={(e) => this.handleMouseOver(e, task.status, task.songID)}
+                    handleMouseOver={(e) =>
+                        this.handleMouseOverForDelete(
+                            e,
+                            task.status,
+                            task.songID
+                        )
+                    }
                 />
-            );            
+            );
         });
 
         return (
             <div>
                 <div
                     onDragOver={(e) => this.handleDragOver(e)}
-                    onDrop={(e) => this.handleOnDrop(e, "selected", obj.selected)}
+                    onDrop={(e) =>
+                        this.handleOnDrop(e, "selected", obj.selected)
+                    }
                     className="selected-container"
                 >
                     Selected Songs
-                    {obj.selected}
+                    <div className="selected-songs-list">{obj.selected}</div>
                 </div>
 
                 <div
                     onDragOver={(e) => this.handleDragOver(e)}
-                    onDrop={(e) => this.handleOnDrop(e, "decided1", obj.decided1)}
+                    onDrop={(e) =>
+                        this.handleOnDrop(e, "decided1", obj.decided1)
+                    }
+                    onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
+                    onMouseLeave={(e) => this.handleMouseLeaveInfo(e)}
                     className="decided-container1"
                 >
                     <FeatureCard feature="Energy" list={obj.decided1} />
@@ -193,7 +193,11 @@ class Dropzone extends React.Component {
 
                 <div
                     onDragOver={(e) => this.handleDragOver(e)}
-                    onDrop={(e) => this.handleOnDrop(e, "decided2", obj.decided2)}
+                    onDrop={(e) =>
+                        this.handleOnDrop(e, "decided2", obj.decided2)
+                    }
+                    onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
+                    onMouseLeave={(e) => this.handleMouseLeaveInfo(e)}
                     className="decided-container2"
                 >
                     <FeatureCard
@@ -204,7 +208,11 @@ class Dropzone extends React.Component {
 
                 <div
                     onDragOver={(e) => this.handleDragOver(e)}
-                    onDrop={(e) => this.handleOnDrop(e, "decided3", obj.decided3)}
+                    onDrop={(e) =>
+                        this.handleOnDrop(e, "decided3", obj.decided3)
+                    }
+                    onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
+                    onMouseLeave={(e) => this.handleMouseLeaveInfo(e)}
                     className="decided-container3"
                 >
                     <FeatureCard feature="Positivity" list={obj.decided3} />
