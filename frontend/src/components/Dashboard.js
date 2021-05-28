@@ -45,9 +45,7 @@ class Dashboard extends React.Component {
             // switch between FeatureCards and RecomSongs
             active: "CARDS",
 
-            songCat1: ['5bC7bZtKUa4nxbp6bEoDuY', '5bC7bZtKUa4nxbp6bEoDuY'],
-            songCat2: ['5bC7bZtKUa4nxbp6bEoDuY'],
-            songCat3: ['5bC7bZtKUa4nxbp6bEoDuY'],
+            
 
             // update this from backend recommendations
             // TODO: content filled with sample data
@@ -57,6 +55,12 @@ class Dashboard extends React.Component {
         };
 
         this.cancel = "";
+    }
+
+    songCat = {
+        energy: [],
+        instrumentalness: [],
+        positivity: []
     }
 
     buckets = {
@@ -78,6 +82,16 @@ class Dashboard extends React.Component {
         buckets[bucket].push(songFeaturesObject);
     };
 
+    addToCats = (songId, toBucketName) => {
+        this.songCat[toBucketName].push(songId);
+        console.log(this.songCat);
+    }
+
+    removeFromCats = (songId, fromBucketName) => {
+        const index = this.songCat[fromBucketName].indexOf(songId);
+        this.songCat[fromBucketName].splice(index, 1);
+        console.log(this.songCat);
+    }
     /* 
         A function to add a songFeaturesObject to the right bucket of the
         underlying buckets model.
@@ -107,6 +121,7 @@ class Dashboard extends React.Component {
             songId,
             this.state.cancel
         ).then((res) => {
+            console.log(res);
             this.setState({ loading: false });
             return res;
         });
@@ -114,9 +129,11 @@ class Dashboard extends React.Component {
         // update bucket, calculate base widths, and update results bars
         if(fromBucketName !== "selected") {
             this.removeFromBuckets(songFeatureObj, this.buckets, fromBucketName);
+            this.removeFromCats(songId, fromBucketName);
         }
         if(toBucketName !== "selected") {
             this.addToBuckets(songFeatureObj, this.buckets, toBucketName);
+            this.addToCats(songId, toBucketName);
         }
         this.setState({ targetAcc: calculateBaselines(this.buckets) });
         const songSuggestion = {};
@@ -293,6 +310,7 @@ class Dashboard extends React.Component {
         }
     };
 
+
     /*
         Called to see the recommended songs and go back to feature cards
     */
@@ -304,6 +322,19 @@ class Dashboard extends React.Component {
             active: newActive
         });
         // get song ids in three cats -> backend -> update recomsongids
+        if(this.state.active === 'CARDS'){
+            fetch('/recommend_songs', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({'songName': this.state.songCat})
+            })
+                .then(res => res.json())
+                .then(res => {
+                    this.setState({ songID: res['songName']})
+                })
+        }
     }
 
     render() {

@@ -1,9 +1,15 @@
 from flask import flask
 from flask.app import Flask
+import pandas as pd
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+from requests.api import get
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 
 def create_app():
   app = Flask(__name__)
-
   return app
 
 
@@ -27,9 +33,9 @@ all_features = ['id', 'name', 'artists','danceability','energy','loudness', 'mod
  'speechiness','acousticness','instrumentalness', 'liveness','valence','tempo']
 
 
-category_dict = {'cat1': ["energy", "loudness", "tempo", "danceability"],
-                'cat2': ["instrumentalness", "speechiness", "liveness", "acousticness"],
-                'cat3': ["valence", "mode"]}
+category_dict = {'energy': ["energy", "loudness", "tempo", "danceability"],
+                'instrumentalness': ["instrumentalness", "speechiness", "liveness", "acousticness"],
+                'positivity': ["valence", "mode"]}
 song_df = pd.read_csv('tracks.csv')
 
 @app.route('/recommend_songs', methods=['POST'])
