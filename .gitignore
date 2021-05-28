@@ -1,4 +1,5 @@
 .vscode
+.env
 credentials
 # Backend
 /backend/api/credentials.py
