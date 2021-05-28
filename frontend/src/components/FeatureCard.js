@@ -1,10 +1,7 @@
-import React, { useCallback } from "react";
+import React from "react";
 import "../styles/FeatureCard.css";
 
 class FeatureCard extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (

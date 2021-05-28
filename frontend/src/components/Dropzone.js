@@ -5,9 +5,6 @@ import DragDropSongItem from "./DragDropSongItem";
 import { hasSongList, hasSongComponentsList } from "../utils/functions.js";
 
 class Dropzone extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     state = {
         list: [
@@ -40,6 +37,7 @@ class Dropzone extends React.Component {
                 ],
             };
         }
+        return null;
     }
 
     handleDragStart = (e, name, songID, status) => {

@@ -2,7 +2,7 @@ import React from "react";
 
 import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
-import { ResultsList, ResultsItem, TotalBar } from "./ResultsList";
+import { ResultsList } from "./ResultsList";
 import RecomSongs from "./RecomSongs";
 
 import "../styles/Dashboard.css";
@@ -45,17 +45,14 @@ class Dashboard extends React.Component {
             // switch between FeatureCards and RecomSongs
             active: "CARDS",
 
+            songCat1: ['5bC7bZtKUa4nxbp6bEoDuY', '5bC7bZtKUa4nxbp6bEoDuY'],
+            songCat2: ['5bC7bZtKUa4nxbp6bEoDuY'],
+            songCat3: ['5bC7bZtKUa4nxbp6bEoDuY'],
+
             // update this from backend recommendations
             // TODO: content filled with sample data
             recomSongIds: [
-                "52kvZcbEDm0v2kWZQXjuuA",
-                "2V3H7K7plyYRjKzAoDK3SK",
-                "52kvZcbEDm0v2kWZQXjuuA",
-                "2V3H7K7plyYRjKzAoDK3SK",
-                "52kvZcbEDm0v2kWZQXjuuA",
-                "2V3H7K7plyYRjKzAoDK3SK",
-                "52kvZcbEDm0v2kWZQXjuuA",
-                "2V3H7K7plyYRjKzAoDK3SK"
+                "1bhUWB0zJMIKr9yVPrkEuI"
                 ]
         };
 
@@ -209,7 +206,7 @@ class Dashboard extends React.Component {
             cancelToken: this.cancel.token,
         })
             .then((res) => {
-                console.log(res);
+                // console.log(res);
                 this.setState({
                     results: res,
                     loading: false,
@@ -300,17 +297,18 @@ class Dashboard extends React.Component {
         Called to see the recommended songs and go back to feature cards
     */
     handleOnGoNBack = () => {
-        console.log(this.state.resultsItems);
+        // console.log(this.state.resultsItems);
         var active = this.state.active;
         var newActive = active === 'CARDS' ? 'SONGS' : 'CARDS';
         this.setState({
             active: newActive
         });
+        // get song ids in three cats -> backend -> update recomsongids
     }
 
     render() {
         var active = this.state.active;
-
+        // console.log(this.state);
         return (
             <div>
                 <header className="App-header">

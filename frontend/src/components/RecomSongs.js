@@ -15,12 +15,12 @@ class RecomSongs extends React.Component {
 		var recomSongIds = this.state.recomSongIds;
 		var songId;
 		for (songId of recomSongIds){
-			const searchUrl = `https://api.spotify.com/v1/albums/${songId}`;
+			const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
 			get(searchUrl)
 			.then((res) => {
 				this.setState({
 					recomSongs: this.state.recomSongs.concat({
-						image: res.images[0].url,
+						image: res.album.images[0].url,
 						name: res.name,
 						url: res.href})
 				});

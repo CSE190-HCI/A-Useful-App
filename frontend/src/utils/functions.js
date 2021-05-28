@@ -141,7 +141,7 @@ export const returnResultsItems = (featureRatios) => {
     )
         return <></>;
     return [
-        featureRatios.energy.baseWidth == "0%" ? (
+        featureRatios.energy.baseWidth === "0%" ? (
             <></>
         ) : (
             <ResultsItem
@@ -149,7 +149,7 @@ export const returnResultsItems = (featureRatios) => {
                 bar={<TotalBar widths={featureRatios.energy} />}
             />
         ),
-        featureRatios.instrumentalness.baseWidth == "0%" ? (
+        featureRatios.instrumentalness.baseWidth === "0%" ? (
             <></>
         ) : (
             <ResultsItem
@@ -157,7 +157,7 @@ export const returnResultsItems = (featureRatios) => {
                 bar={<TotalBar widths={featureRatios.instrumentalness} />}
             />
         ),
-        featureRatios.positivity.baseWidth == "0%" ? (
+        featureRatios.positivity.baseWidth === "0%" ? (
             <></>
         ) : (
             <ResultsItem
@@ -191,7 +191,7 @@ export const calculateBaselines = (buckets) => {
 export const hasSongList = (list, song) => {
     if(!list || !song) return false;
     for(const listSong of list) {
-        if(listSong.songID == song.songID) return true;
+        if(listSong.songID === song.songID) return true;
     }
     return false;
 }
@@ -200,7 +200,7 @@ export const hasSongComponentsList = (list, songID) => {
     console.log(list);
     if(!list || !songID) return false;
     for(const component of list) {
-        if(component.props.songID == songID) return true;
+        if(component.props.songID === songID) return true;
     }
     return false;
 }
