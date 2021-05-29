@@ -84,13 +84,13 @@ class Dashboard extends React.Component {
 
     addToCats = (songId, toBucketName) => {
         this.songCat[toBucketName].push(songId);
-        console.log(this.songCat);
+        // console.log(this.songCat);
     }
 
     removeFromCats = (songId, fromBucketName) => {
         const index = this.songCat[fromBucketName].indexOf(songId);
         this.songCat[fromBucketName].splice(index, 1);
-        console.log(this.songCat);
+        // console.log(this.songCat);
     }
     /* 
         A function to add a songFeaturesObject to the right bucket of the
@@ -121,7 +121,7 @@ class Dashboard extends React.Component {
             songId,
             this.state.cancel
         ).then((res) => {
-            console.log(res);
+            // console.log(res);
             this.setState({ loading: false });
             return res;
         });
@@ -179,9 +179,9 @@ class Dashboard extends React.Component {
     };
 
     checkSearch = () => {
-        console.log(
-            `PreventSearchDisappear is now ${this.state.preventSearchDisappear}`
-        );
+        // console.log(
+        //     `PreventSearchDisappear is now ${this.state.preventSearchDisappear}`
+        // );
     };
 
     // TODO: maybe delete this if don't need it
@@ -240,9 +240,9 @@ class Dashboard extends React.Component {
     };
 
     printSongArtistID = () => {
-        console.log(
-            `this.state is now ${this.state.selectedSong}, ${this.state.selectedArtist}, ${this.state.songID}`
-        );
+        // console.log(
+        //     `this.state is now ${this.state.selectedSong}, ${this.state.selectedArtist}, ${this.state.songID}`
+        // );
     };
 
     handleSelect = (name, artist, ID) => {
@@ -259,14 +259,14 @@ class Dashboard extends React.Component {
     };
 
     handleMouseEnter = () => {
-        console.log("handleMouseEnter is called");
+        // console.log("handleMouseEnter is called");
         this.setState({
             preventSearchDisappear: true,
         });
     };
 
     handleMouseLeave = () => {
-        console.log("handleMouseLeave is called");
+        // console.log("handleMouseLeave is called");
         this.setState(
             {
                 preventSearchDisappear: false,
@@ -321,6 +321,7 @@ class Dashboard extends React.Component {
         this.setState({
             active: newActive
         });
+        console.log(this.songCat)
         // get song ids in three cats -> backend -> update recomsongids
         if(this.state.active === 'CARDS'){
             fetch('/recommend_songs', {
@@ -328,11 +329,12 @@ class Dashboard extends React.Component {
                 headers: {
                     'Content-type': 'application/json'
                 },
-                body: JSON.stringify({'songName': this.state.songCat})
+                body: JSON.stringify({'songCat': this.songCat})
             })
                 .then(res => res.json())
                 .then(res => {
-                    this.setState({ songID: res['songName']})
+                    console.log(res);
+                    // this.setState({ songID: res['songName']})
                 })
         }
     }

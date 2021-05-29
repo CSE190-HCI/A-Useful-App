@@ -84,16 +84,16 @@ const calculateInstrumentalness = (audioFeatures) => {
     return average;
 };
 const calculatePositivity = (audioFeatures) => {
-    console.log("calculatePositivity called");
+    // console.log("calculatePositivity called");
     const average =
         (audioFeatures.valence * 0.8 + audioFeatures.mode * 0.2) / 2;
     return average;
 };
 
 const extractFeatures = (audioFeatures) => {
-    console.log("extract features called");
+    // console.log("extract features called");
     return new Promise((resolve) => {
-        console.log(`promise resolved`);
+        // console.log(`promise resolved`);
         resolve({
             energy: calculateEnergy(audioFeatures),
             instrumentalness: calculateInstrumentalness(audioFeatures),
@@ -197,7 +197,7 @@ export const hasSongList = (list, song) => {
 }
 
 export const hasSongComponentsList = (list, songID) => {
-    console.log(list);
+    // console.log(list);
     if(!list || !songID) return false;
     for(const component of list) {
         if(component.props.songID === songID) return true;
