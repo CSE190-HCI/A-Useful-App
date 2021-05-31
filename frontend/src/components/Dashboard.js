@@ -1,11 +1,19 @@
 import React from "react";
 
 import FeatureCard from "./FeatureCard";
+import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
 import { ResultsList, ResultsItem, TotalBar } from "./ResultsList";
+import InfoBox from "./InfoBox";
 
 import "../styles/Dashboard.css";
 import Dropzone from "./Dropzone";
+import {
+    computeWidthsForFeatures,
+    createSongFeaturesObject,
+    returnResultsItems,
+    calculateBaselines,
+} from "../utils/functions.js";
 
 import { get } from "../utils/api";
 import axios from "axios";
@@ -19,80 +27,120 @@ class Dashboard extends React.Component {
             results: {},
             loading: false,
             message: "",
-            // just for where to put the search results
+
             searchStyle: {
                 top: 0,
                 left: 0,
                 width: 0,
             },
-            isUpdate: false,
             preventSearchDisappear: false,
             searchAppear: false,
+
+            isUpdate: false,
             selectedSong: "",
             selectedArtist: "",
-            songID: "id",
+            songID: "",
+
+            resultsItems: [],
+            targetAcc: {},
+
+            infoMessage: "",
         };
 
         this.cancel = "";
     }
 
-    target = { energy: 0.7, instrumentalness: 0.45, mood: 0.75 };
-    songSuggestion = { energy: 0.8, instrumentalness: 0.5, mood: 0.65 };
-
-    convertToPercentage = (value) => {
-        return Math.round((value / 1) * 100) + "%";
+    buckets = {
+        energy: [
+            // { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 }
+        ],
+        instrumentalness: [],
+        positivity: [
+            // { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
+            // { energy: 0.26, instrumentalness: 0.45, positivity: 0.36 },
+        ],
     };
 
-    computeWidths = (targetValue, suggestionValue) => {
-        let greenWidth =
-            suggestionValue >= targetValue
-                ? this.convertToPercentage(suggestionValue)
-                : this.convertToPercentage(0);
-        let redWidth =
-            suggestionValue < targetValue
-                ? this.convertToPercentage(targetValue)
-                : this.convertToPercentage(0);
-        let baseWidth =
-            suggestionValue < targetValue
-                ? this.convertToPercentage(suggestionValue)
-                : this.convertToPercentage(targetValue);
-        return {
-            baseWidth: baseWidth,
-            redWidth: redWidth,
-            greenWidth: greenWidth,
-        };
+    /* 
+        A function to add a songFeaturesObject to the right bucket of the
+        underlying buckets model.
+     */
+    addToBuckets = (songFeaturesObject, buckets, bucket) => {
+        buckets[bucket].push(songFeaturesObject);
     };
 
-    computeWidthsForFeatures = (target, songSuggestion) => {
-        let featureRatios = {};
-        for (const feature of Object.keys(target)) {
-            featureRatios[feature] = this.computeWidths(
-                target[feature],
-                songSuggestion[feature]
+    /* 
+        A function to add a songFeaturesObject to the right bucket of the
+        underlying buckets model.
+     */
+    removeFromBuckets = (songFeaturesObject, buckets, bucket) => {
+        const index = buckets[bucket].indexOf(songFeaturesObject);
+        buckets[bucket].splice(index, 1);
+    };
+
+    /* 
+        A wrapper function just for setting the resultsItems state in order
+        to update the results bar UI and render the bars correctly.
+    */
+    updateResultsItems = (featureRatios) => {
+        this.setState({ resultsItems: returnResultsItems(featureRatios) });
+    };
+
+    /*
+        Called when a song is added to a bucket. Given the newly added song
+        id and the name of the bucket/feature it got dragged into, get the
+        features of the song from Spotify, add to underlying buckets model,
+        compute the widths, and update the bars UI.
+    */
+    updateResultsBars = async (songId, fromBucketName, toBucketName) => {
+        // get features from a new song
+        const songFeatureObj = await createSongFeaturesObject(
+            songId,
+            this.state.cancel
+        ).then((res) => {
+            this.setState({ loading: false });
+            return res;
+        });
+
+        // update bucket, calculate base widths, and update results bars
+        if (fromBucketName !== "selected") {
+            this.removeFromBuckets(
+                songFeatureObj,
+                this.buckets,
+                fromBucketName
             );
         }
-        return featureRatios;
+        if (toBucketName !== "selected") {
+            this.addToBuckets(songFeatureObj, this.buckets, toBucketName);
+        }
+        this.setState({ targetAcc: calculateBaselines(this.buckets) });
+        const songSuggestion = {};
+        const featureRatios = computeWidthsForFeatures(
+            this.state.targetAcc,
+            songSuggestion
+        );
+        this.updateResultsItems(featureRatios);
     };
 
-    featureRatios = this.computeWidthsForFeatures(
-        this.target,
-        this.songSuggestion
-    );
+    componentDidMount() {
+        this.updateResultsItems(undefined);
+    }
 
-    items = [
-        <ResultsItem
-            feature="Energy"
-            bar={<TotalBar widths={this.featureRatios.energy} />}
-        />,
-        <ResultsItem
-            feature="Instrumentalness"
-            bar={<TotalBar widths={this.featureRatios.instrumentalness} />}
-        />,
-        <ResultsItem
-            feature="Mood"
-            bar={<TotalBar widths={this.featureRatios.mood} />}
-        />,
-    ];
+    handleMouseEnterTestRecSong = (recSongFeaturesObject) => {
+        const featureRatios = computeWidthsForFeatures(
+            this.state.targetAcc,
+            recSongFeaturesObject
+        );
+        this.updateResultsItems(featureRatios);
+    };
+
+    handleMouseLeaveTestRecSong = () => {
+        const featureRatios = computeWidthsForFeatures(
+            this.state.targetAcc,
+            {}
+        );
+        this.updateResultsItems(featureRatios);
+    };
 
     // TODO: maybe delete this if don't need it
     handleFocus = (e) => {
@@ -134,7 +182,7 @@ class Dashboard extends React.Component {
     fetchSearchResults = (query) => {
         const searchUrl = `https://api.spotify.com/v1/search?query=${encodeURIComponent(
             query
-        )}&type=album,playlist,artist`;
+        )}&type=track,artist`;
         if (this.cancel) {
             // Cancel the previous request before making a new request
             this.cancel.cancel();
@@ -202,10 +250,10 @@ class Dashboard extends React.Component {
     renderSearchResults = () => {
         if (
             Object.keys(this.state.results).length &&
-            this.state.results.albums.items.length
+            this.state.results.tracks.items.length
         ) {
-            // get the first three songs
-            const songs = this.state.results.albums.items;
+            // get all songs
+            const songs = this.state.results.tracks.items;
 
             // create the search display items from each song
             const items = songs.map((song) => {
@@ -231,6 +279,12 @@ class Dashboard extends React.Component {
                 </div>
             );
         }
+    };
+
+    handleMouseEnterInfoMessage = (infoMessage) => {
+        this.setState({
+            infoMessage: infoMessage,
+        });
     };
 
     render() {
@@ -263,12 +317,43 @@ class Dashboard extends React.Component {
                             selectedArtist={this.state.selectedArtist}
                             songID={this.state.songID}
                             isUpdate={this.state.isUpdate}
+                            update={this.updateResultsBars}
+                            infoFunction={this.handleMouseEnterInfoMessage}
                         />
                     </div>
 
                     <div className="results">
                         <p>Results</p>
-                        <ResultsList items={this.items} />
+                        <ResultsList items={this.state.resultsItems} />
+
+                        <TestRecSongItem
+                            songName="Perfect"
+                            artist="Ed Sheeran"
+                            energy="0.6"
+                            instrumentalness="0.2"
+                            positivity="0.7"
+                            handleMouseEnter={this.handleMouseEnterTestRecSong}
+                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                        />
+                        <TestRecSongItem
+                            songName="You Say Run"
+                            artist="Hayashi Yuuki"
+                            energy="0.9"
+                            instrumentalness="0.9"
+                            positivity="0.8"
+                            handleMouseEnter={this.handleMouseEnterTestRecSong}
+                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                        />
+                        <TestRecSongItem
+                            songName="YouSeeBIGGIRL/T:T"
+                            artist="Hiroyuki Sawano"
+                            energy="0.8"
+                            instrumentalness="0.9"
+                            positivity="0.1"
+                            handleMouseEnter={this.handleMouseEnterTestRecSong}
+                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                        />
+                        <InfoBox infoMessage={this.state.infoMessage}></InfoBox>
                     </div>
                 </header>
             </div>

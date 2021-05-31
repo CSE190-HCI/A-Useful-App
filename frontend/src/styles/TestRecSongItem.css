@@ -1,18 +1,18 @@
 /* Main feature card */
 
 .list-container {
+    /* TODO: may have to delete position prop */
     position: absolute;
     display: flex;
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.75);
-    height: 33vh;
+    height: 700px;
     overflow: auto;
-    z-index: 1;
 }
 
 /* Search result item */
 
-.item-container {
+.test-rec-song-container {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
@@ -20,7 +20,7 @@
     border-bottom: 1px solid lightgray;
 }
 
-.item-container:hover {
+.test-rec-song-container:hover {
     background-color: rgba(255, 255, 255, 0.3);
 }
 

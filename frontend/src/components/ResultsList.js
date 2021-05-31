@@ -19,7 +19,9 @@ class ResultsItem extends React.Component {
     render() {
         return (
             <div className="results-list-item">
-                <label>{this.props.feature}</label>
+                <label className="results-feature-font">
+                    {this.props.feature}
+                </label>
                 {this.props.bar}
             </div>
         );

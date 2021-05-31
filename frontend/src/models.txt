@@ -1,0 +1,31 @@
+featureRatios = {
+    energy: {
+        greenWidth: 0,
+        baseWidth: 0,
+        redWidth: 0,
+    },
+    instrumentalness: {
+        greenWidth: 0,
+        baseWidth: 0,
+        redWidth: 0,
+    },
+    positivity: {
+        greenWidth: 0,
+        baseWidth: 0,
+        redWidth: 0,
+    }
+}
+
+// the object to feed into results bar where all of the features
+// have been properly averaged
+songFeatureObjects = {
+    energy: 0.85, 
+    instrumentalness: 0.45,
+    positivity: 0.75
+};
+
+featureRatios = {
+    energy: "85%", 
+    instrumentalness: "45%",
+    positivity: "75%"
+};
