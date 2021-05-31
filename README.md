@@ -51,3 +51,14 @@ Add the following to .gitignore
 venv
 __pycache__
 ```
+
+## Run
+In the virtual environment
+```bash
+(venv) $ flask run
+```
+
+In frontend/
+```bash
+$ npm start
+```
