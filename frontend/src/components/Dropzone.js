@@ -16,8 +16,10 @@ class Dropzone extends React.Component {
             // },
         ],
         prev_status: "",
-        songID: "",
+        songID: ""
     };
+
+    
 
     static getDerivedStateFromProps(props, state) {
         let newSong = {
@@ -171,7 +173,7 @@ class Dropzone extends React.Component {
         });
 
         return (
-            <div>
+            <div style={{display: this.state.display}}>
                 <div
                     onDragOver={(e) => this.handleDragOver(e)}
                     onDrop={(e) => this.handleOnDrop(e, "selected", obj.selected)}

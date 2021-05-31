@@ -53,9 +53,6 @@ song_df = pd.read_csv('tracks.csv')
 def recommend_song():
     if request.method == 'POST':
         songs_lst = request.json['songCat']
-        print('------')
-        print(songs_lst)
-        print('------')
         songs_vector = {}
         for category in songs_lst:
             if songs_lst[category]:

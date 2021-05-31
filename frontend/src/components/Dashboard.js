@@ -43,25 +43,24 @@ class Dashboard extends React.Component {
             targetAcc: {},
 
             // switch between FeatureCards and RecomSongs
+            displayCards: "block",
+            displaySongs: "none",
             active: "CARDS",
-
-            
-
             // update this from backend recommendations
-            // TODO: content filled with sample data
-            recomSongIds: [
-                "1bhUWB0zJMIKr9yVPrkEuI"
-                ]
+            recomSongIds: [],
+            recomSongs: [],
+            refreshSongs: false
         };
-
+        
         this.cancel = "";
     }
-
+    
+    
     songCat = {
         energy: [],
         instrumentalness: [],
         positivity: []
-    }
+    };
 
     buckets = {
         energy: [
@@ -316,12 +315,25 @@ class Dashboard extends React.Component {
     */
     handleOnGoNBack = () => {
         // console.log(this.state.resultsItems);
+        // displayCards, displaySongs
+        var displayCards = this.state.displayCards;
+        var displaySongs = this.state.displaySongs;
+        var newDisplayCards = displayCards === 'block' ? 'none' : 'block';
+        var newDisplaySongs = displaySongs === 'block' ? 'none' : 'block';
+
         var active = this.state.active;
         var newActive = active === 'CARDS' ? 'SONGS' : 'CARDS';
         this.setState({
-            active: newActive
+            active: newActive,
+            displayCards: newDisplayCards,
+            displaySongs: newDisplaySongs
         });
-        console.log(this.songCat)
+        if(this.state.active === 'SONGS'){
+            this.setState({
+                recomSongIds: [],
+                recomSongs: []
+            })
+        }
         // get song ids in three cats -> backend -> update recomsongids
         if(this.state.active === 'CARDS'){
             fetch('/recommend_songs', {
@@ -333,10 +345,33 @@ class Dashboard extends React.Component {
             })
                 .then(res => res.json())
                 .then(res => {
-                    console.log(res);
-                    // this.setState({ songID: res['songName']})
+                    var song;
+                    for(song of res){
+                        this.setState({
+                            recomSongIds: this.state.recomSongIds.concat(song.id)
+                        })
+                    }
                 })
+                .then(this.refreshRecomSongIds)
         }
+    }
+
+    refreshRecomSongIds = () => {
+        var recomSongIds = this.state.recomSongIds;
+		var songId;
+		for (songId of recomSongIds){
+			const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
+			get(searchUrl)
+			.then((res) => {
+                this.setState({
+                    recomSongs: [...this.state.recomSongs, {
+						image: res.album.images[0].url,
+						name: res.name,
+						url: res.href}],
+                    refreshSongs: true
+                });
+			})		
+		};
     }
 
     render() {
@@ -366,20 +401,19 @@ class Dashboard extends React.Component {
                     </div>
 
                     <div>
-                        {active === "CARDS" ? (
+                        <div style={{display: this.state.displayCards}}>
                             <Dropzone
-                            selectedSong={this.state.selectedSong}
-                            selectedArtist={this.state.selectedArtist}
-                            songID={this.state.songID}
-                            isUpdate={this.state.isUpdate}
-                            update={this.updateResultsBars}
-                        />
-                        ) : active === "SONGS" ? (
+                                selectedSong={this.state.selectedSong}
+                                selectedArtist={this.state.selectedArtist}
+                                songID={this.state.songID}
+                                isUpdate={this.state.isUpdate}
+                                update={this.updateResultsBars}/>
+                        </div>
+
+                        {active !== "CARDS" &&
                             <RecomSongs
-                            recomSongIds={this.state.recomSongIds}/>
-                        ) : null}
-                       
-                        
+                                recomSongs={this.state.recomSongs}
+                                refreshSongs={this.state.refreshSongs}/>}
                     </div>
 
                     <div className="results">
