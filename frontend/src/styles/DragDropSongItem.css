@@ -30,11 +30,15 @@
     color: lightgray;
 }
 
-.decided1 .drag-artist, .decided2 .drag-artist, .decided3 .drag-artist {
+.decided1 .drag-artist,
+.decided2 .drag-artist,
+.decided3 .drag-artist {
     color: #585858;
 }
 
-.decided1 .drag-song-name, .decided2 .drag-song-name, .decided3 .drag-song-name {
+.decided1 .drag-song-name,
+.decided2 .drag-song-name,
+.decided3 .drag-song-name {
     color: #222222;
 }
 
@@ -54,6 +58,7 @@
     font-size: large;
     font-weight: bold;
     border: none;
+    border-radius: 6px;
 }
 
 .drag-song-delete-btn:hover {

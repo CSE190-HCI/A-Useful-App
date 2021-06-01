@@ -37,6 +37,7 @@ Notes:  - The container width is sized by .text-field.
     display: flex;
     flex-direction: column;
     justify-content: left;
+    height: 75%;
     /* margin-left: 15px; */
 }
 
@@ -47,4 +48,9 @@ Notes:  - The container width is sized by .text-field.
     margin: 15px 0px 0px 0px;
 }
 
-
+.song-list {
+    height: 77%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+}

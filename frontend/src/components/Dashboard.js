@@ -4,6 +4,7 @@ import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
 import { ResultsList } from "./ResultsList";
 import RecomSongs from "./RecomSongs";
+import InfoBox from "./InfoBox";
 
 import "../styles/Dashboard.css";
 import Dropzone from "./Dropzone";
@@ -26,21 +27,24 @@ class Dashboard extends React.Component {
             results: {},
             loading: false,
             message: "",
-            // just for where to put the search results
+
             searchStyle: {
                 top: 0,
                 left: 0,
                 width: 0,
             },
-            isUpdate: false,
             preventSearchDisappear: false,
             searchAppear: false,
+
+            isUpdate: false,
             selectedSong: "",
             selectedArtist: "",
             songID: "",
 
             resultsItems: [],
             targetAcc: {},
+
+            infoMessage: "",
 
             // switch between FeatureCards and RecomSongs
             displayCards: "block",
@@ -49,17 +53,16 @@ class Dashboard extends React.Component {
             // update this from backend recommendations
             recomSongIds: [],
             recomSongs: [],
-            refreshSongs: false
+            refreshSongs: false,
         };
-        
+
         this.cancel = "";
     }
-    
-    
+
     songCat = {
         energy: [],
         instrumentalness: [],
-        positivity: []
+        positivity: [],
     };
 
     buckets = {
@@ -84,13 +87,13 @@ class Dashboard extends React.Component {
     addToCats = (songId, toBucketName) => {
         this.songCat[toBucketName].push(songId);
         // console.log(this.songCat);
-    }
+    };
 
     removeFromCats = (songId, fromBucketName) => {
         const index = this.songCat[fromBucketName].indexOf(songId);
         this.songCat[fromBucketName].splice(index, 1);
         // console.log(this.songCat);
-    }
+    };
     /* 
         A function to add a songFeaturesObject to the right bucket of the
         underlying buckets model.
@@ -126,11 +129,15 @@ class Dashboard extends React.Component {
         });
 
         // update bucket, calculate base widths, and update results bars
-        if(fromBucketName !== "selected") {
-            this.removeFromBuckets(songFeatureObj, this.buckets, fromBucketName);
+        if (fromBucketName !== "selected") {
+            this.removeFromBuckets(
+                songFeatureObj,
+                this.buckets,
+                fromBucketName
+            );
             this.removeFromCats(songId, fromBucketName);
         }
-        if(toBucketName !== "selected") {
+        if (toBucketName !== "selected") {
             this.addToBuckets(songFeatureObj, this.buckets, toBucketName);
             this.addToCats(songId, toBucketName);
         }
@@ -145,7 +152,6 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
         this.updateResultsItems(undefined);
-        // this.updateResultsBars("5IEP2NdoJtkoThS0fkZmap", "positivity");
     }
 
     handleMouseEnterTestRecSong = (recSongFeaturesObject) => {
@@ -309,7 +315,6 @@ class Dashboard extends React.Component {
         }
     };
 
-
     /*
         Called to see the recommended songs and go back to feature cards
     */
@@ -318,61 +323,71 @@ class Dashboard extends React.Component {
         // displayCards, displaySongs
         var displayCards = this.state.displayCards;
         var displaySongs = this.state.displaySongs;
-        var newDisplayCards = displayCards === 'block' ? 'none' : 'block';
-        var newDisplaySongs = displaySongs === 'block' ? 'none' : 'block';
+        var newDisplayCards = displayCards === "block" ? "none" : "block";
+        var newDisplaySongs = displaySongs === "block" ? "none" : "block";
 
         var active = this.state.active;
-        var newActive = active === 'CARDS' ? 'SONGS' : 'CARDS';
+        var newActive = active === "CARDS" ? "SONGS" : "CARDS";
         this.setState({
             active: newActive,
             displayCards: newDisplayCards,
-            displaySongs: newDisplaySongs
+            displaySongs: newDisplaySongs,
         });
-        if(this.state.active === 'SONGS'){
+        if (this.state.active === "SONGS") {
             this.setState({
                 recomSongIds: [],
-                recomSongs: []
-            })
+                recomSongs: [],
+            });
         }
         // get song ids in three cats -> backend -> update recomsongids
-        if(this.state.active === 'CARDS'){
-            fetch('/recommend_songs', {
-                method: 'POST',
+        if (this.state.active === "CARDS") {
+            fetch("/recommend_songs", {
+                method: "POST",
                 headers: {
-                    'Content-type': 'application/json'
+                    "Content-type": "application/json",
                 },
-                body: JSON.stringify({'songCat': this.songCat})
+                body: JSON.stringify({ songCat: this.songCat }),
             })
-                .then(res => res.json())
-                .then(res => {
+                .then((res) => res.json())
+                .then((res) => {
                     var song;
-                    for(song of res){
+                    for (song of res) {
                         this.setState({
-                            recomSongIds: this.state.recomSongIds.concat(song.id)
-                        })
+                            recomSongIds: this.state.recomSongIds.concat(
+                                song.id
+                            ),
+                        });
                     }
                 })
-                .then(this.refreshRecomSongIds)
+                .then(this.refreshRecomSongIds);
         }
-    }
+    };
 
     refreshRecomSongIds = () => {
         var recomSongIds = this.state.recomSongIds;
-		var songId;
-		for (songId of recomSongIds){
-			const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
-			get(searchUrl)
-			.then((res) => {
+        var songId;
+        for (songId of recomSongIds) {
+            const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
+            get(searchUrl).then((res) => {
                 this.setState({
-                    recomSongs: [...this.state.recomSongs, {
-						image: res.album.images[0].url,
-						name: res.name,
-						url: res.href}],
-                    refreshSongs: true
+                    recomSongs: [
+                        ...this.state.recomSongs,
+                        {
+                            image: res.album.images[0].url,
+                            name: res.name,
+                            url: res.href,
+                        },
+                    ],
+                    refreshSongs: true,
                 });
-			})		
-		};
-    }
+            });
+        }
+    };
+    handleMouseEnterInfoMessage = (infoMessage) => {
+        this.setState({
+            infoMessage: infoMessage,
+        });
+    };
 
     render() {
         var active = this.state.active;
@@ -401,19 +416,23 @@ class Dashboard extends React.Component {
                     </div>
 
                     <div>
-                        <div style={{display: this.state.displayCards}}>
+                        <div style={{ display: this.state.displayCards }}>
                             <Dropzone
                                 selectedSong={this.state.selectedSong}
                                 selectedArtist={this.state.selectedArtist}
                                 songID={this.state.songID}
                                 isUpdate={this.state.isUpdate}
-                                update={this.updateResultsBars}/>
+                                update={this.updateResultsBars}
+                                infoFunction={this.handleMouseEnterInfoMessage}
+                            />
                         </div>
 
-                        {active !== "CARDS" &&
+                        {active !== "CARDS" && (
                             <RecomSongs
                                 recomSongs={this.state.recomSongs}
-                                refreshSongs={this.state.refreshSongs}/>}
+                                refreshSongs={this.state.refreshSongs}
+                            />
+                        )}
                     </div>
 
                     <div className="results">
@@ -447,12 +466,15 @@ class Dashboard extends React.Component {
                             handleMouseEnter={this.handleMouseEnterTestRecSong}
                             handleMouseLeave={this.handleMouseLeaveTestRecSong}
                         />
-                        <button type="button" onClick={this.handleOnGoNBack}>{active === "CARDS" ? (
-                            <div>Go</div>
-                        ) : active === "SONGS" ? (
-                            <div>Back</div>
-                        ) : null}</button>
-                        
+                        <button type="button" onClick={this.handleOnGoNBack}>
+                            {active === "CARDS" ? (
+                                <div>Go</div>
+                            ) : active === "SONGS" ? (
+                                <div>Back</div>
+                            ) : null}
+                        </button>
+
+                        <InfoBox infoMessage={this.state.infoMessage}></InfoBox>
                     </div>
                 </header>
             </div>

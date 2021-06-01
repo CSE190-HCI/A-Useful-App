@@ -2,8 +2,16 @@
     margin-top: 400px;
     margin-left: -33vw;
     width: 33vw;
+    height: 37vh;
     position: absolute;
     z-index: 0;
+}
+
+.selected-songs-list {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
 }
 
 .decided-container1 {
@@ -30,7 +38,9 @@
     /* position: absolute; */
 }
 
-.decided-container1 p, .decided-container2 p, .decided-container3 p {
+.decided-container1 p,
+.decided-container2 p,
+.decided-container3 p {
     margin: 2% 0px 0px 0px;
 }
 
@@ -38,6 +48,8 @@
     padding: 0px 2% 0px 2%;
 }
 
-.decided1, .decided2, .decided3 {
+.decided1,
+.decided2,
+.decided3 {
     margin: 2% 0px 2% 0px;
 }
