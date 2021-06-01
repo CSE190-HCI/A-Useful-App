@@ -13,6 +13,7 @@ import {
     createSongFeaturesObject,
     returnResultsItems,
     calculateBaselines,
+    selectInfoMessage,
 } from "../utils/functions.js";
 
 import { get } from "../utils/api";
@@ -281,6 +282,14 @@ class Dashboard extends React.Component {
         }
     };
 
+    handleMouseEnterInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(e.target.className));
+    };
+
+    handleMouseLeaveInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(""));
+    };
+
     handleMouseEnterInfoMessage = (infoMessage) => {
         this.setState({
             infoMessage: infoMessage,
@@ -298,6 +307,7 @@ class Dashboard extends React.Component {
                             type="text"
                             placeholder="Search for a song..."
                             className="text-field"
+                            onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
                             onChange={this.handleOnInputChange}
                             onFocus={(e) => this.handleFocus(e)}
                             onBlur={(e) => this.handleBlur(e)}
