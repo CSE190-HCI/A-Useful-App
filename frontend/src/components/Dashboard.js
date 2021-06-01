@@ -13,6 +13,7 @@ import {
     createSongFeaturesObject,
     returnResultsItems,
     calculateBaselines,
+    extractFeaturesSync
 } from "../utils/functions.js";
 
 import { get } from "../utils/api";
@@ -70,10 +71,7 @@ class Dashboard extends React.Component {
             // { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 }
         ],
         instrumentalness: [],
-        positivity: [
-            // { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
-            // { energy: 0.26, instrumentalness: 0.45, positivity: 0.36 },
-        ],
+        positivity: [],
     };
 
     /* 
@@ -350,14 +348,14 @@ class Dashboard extends React.Component {
             })
                 .then((res) => res.json())
                 .then((res) => {
-                    var song;
-                    for (song of res) {
+                    /* RES IS AN ARRAY OF FEATURES OF REC SONGS */
+                    for (const song of res) {
                         this.setState({
                             recomSongIds: this.state.recomSongIds.concat(
                                 song.id
                             ),
                         });
-                    }
+                    }                    
                 })
                 .then(this.refreshRecomSongIds);
         }
@@ -367,19 +365,24 @@ class Dashboard extends React.Component {
         var recomSongIds = this.state.recomSongIds;
         var songId;
         for (songId of recomSongIds) {
+            console.log(songId);
             const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
+            const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
             get(searchUrl).then((res) => {
-                this.setState({
-                    recomSongs: [
-                        ...this.state.recomSongs,
-                        {
-                            image: res.album.images[0].url,
-                            name: res.name,
-                            url: res.href,
-                        },
-                    ],
-                    refreshSongs: true,
-                });
+                get(getFeaturesUrl).then((features) => {        
+                    this.setState({
+                        recomSongs: [
+                            ...this.state.recomSongs,
+                            {
+                                image: res.album.images[0].url,
+                                name: res.name,
+                                url: res.href,
+                                ...extractFeaturesSync(features)
+                            },
+                        ],
+                        refreshSongs: true,
+                    });
+                })
             });
         }
     };
@@ -431,6 +434,8 @@ class Dashboard extends React.Component {
                             <RecomSongs
                                 recomSongs={this.state.recomSongs}
                                 refreshSongs={this.state.refreshSongs}
+                                handleMouseEnter={this.handleMouseEnterTestRecSong}
+                                handleMouseLeave={this.handleMouseLeaveTestRecSong}
                             />
                         )}
                     </div>
@@ -439,7 +444,7 @@ class Dashboard extends React.Component {
                         <p>Results</p>
                         <ResultsList items={this.state.resultsItems} />
 
-                        <TestRecSongItem
+                        {/* <TestRecSongItem
                             songName="Perfect"
                             artist="Ed Sheeran"
                             energy="0.6"
@@ -465,7 +470,7 @@ class Dashboard extends React.Component {
                             positivity="0.1"
                             handleMouseEnter={this.handleMouseEnterTestRecSong}
                             handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                        />
+                        /> */}
                         <button type="button" onClick={this.handleOnGoNBack}>
                             {active === "CARDS" ? (
                                 <div>Go</div>

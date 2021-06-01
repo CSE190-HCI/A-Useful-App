@@ -14,9 +14,10 @@
 
 .test-rec-song-container {
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    padding: 2px 30px 7px 10px;
+    flex-direction: row;
+    justify-content: flex-start;
+    justify-items: center;
+    padding: 5px 30px 5px 10px;
     border-bottom: 1px solid lightgray;
 }
 
@@ -24,7 +25,19 @@
     background-color: rgba(255, 255, 255, 0.3);
 }
 
+img {
+    width: 13%;
+    height: 13%;
+}
+
 /* Item labels */
+
+.labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding-left: 5%;
+}
 
 .song-name {
     text-align: left;

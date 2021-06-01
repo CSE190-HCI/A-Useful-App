@@ -86,6 +86,14 @@ const calculatePositivity = (audioFeatures) => {
     return average;
 };
 
+export const extractFeaturesSync = (audioFeatures) => {
+    return {
+        energy: calculateEnergy(audioFeatures),
+        instrumentalness: calculateInstrumentalness(audioFeatures),
+        positivity: calculatePositivity(audioFeatures),
+    };
+}
+
 const extractFeatures = (audioFeatures) => {
     // console.log("extract features called");
     return new Promise((resolve) => {
