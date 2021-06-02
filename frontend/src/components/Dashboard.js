@@ -366,7 +366,6 @@ class Dashboard extends React.Component {
         var recomSongIds = this.state.recomSongIds;
         var songId;
         for (songId of recomSongIds) {
-            console.log(songId);
             const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
             const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
             get(searchUrl).then((res) => {
@@ -377,6 +376,7 @@ class Dashboard extends React.Component {
                             {
                                 image: res.album.images[0].url,
                                 name: res.name,
+                                artist: res.artists[0].name,
                                 url: res.href,
                                 ...extractFeaturesSync(features)
                             },
@@ -385,7 +385,7 @@ class Dashboard extends React.Component {
                     });
                 })
             });
-        }
+        }        
     };
     handleMouseEnterInfoMessage = (infoMessage) => {
         this.setState({
