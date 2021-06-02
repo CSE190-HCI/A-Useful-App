@@ -2,9 +2,6 @@ import React from "react";
 import "../styles/ResultsList.css";
 
 class ResultsList extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return <div className="results-list-container">{this.props.items}</div>;
@@ -12,9 +9,6 @@ class ResultsList extends React.Component {
 }
 
 class ResultsItem extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (
@@ -29,9 +23,6 @@ class ResultsItem extends React.Component {
 }
 
 class TotalBar extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (

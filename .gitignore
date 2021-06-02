@@ -1,7 +1,12 @@
 .vscode
+.env
 
+__pycache__
 # Backend
 /backend/api/credentials.py
 /backend/api/__pycache__
 /backend/api/.cache
-node_modules
+/node_modules
+credentials
+venv
+tracks.csv

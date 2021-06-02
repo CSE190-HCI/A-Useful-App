@@ -10,15 +10,14 @@ import {
 } from "../utils/functions.js";
 
 class Dropzone extends React.Component {
-    constructor(props) {
-        super(props);
-    }
 
     state = {
         list: [],
         prev_status: "",
-        songID: "",
+        songID: ""
     };
+
+    
 
     static getDerivedStateFromProps(props, state) {
         let newSong = {
@@ -35,10 +34,11 @@ class Dropzone extends React.Component {
                 list: [...state.list, newSong],
             };
         }
+        return null;
     }
 
     handleDragStart = (e, name, songID, status) => {
-        console.log(name);
+        // console.log(name);
         e.dataTransfer.setData("id", name);
 
         this.setState({
@@ -91,7 +91,7 @@ class Dropzone extends React.Component {
         }
 
         let id = e.dataTransfer.getData("id");
-        console.log(this.state.list);
+        // console.log(this.state.list);
 
         let cloneTask = undefined;
 
@@ -167,7 +167,7 @@ class Dropzone extends React.Component {
         });
 
         return (
-            <div>
+            <div style={{display: this.state.display}}>
                 <div
                     onDragOver={(e) => this.handleDragOver(e)}
                     onDrop={(e) =>

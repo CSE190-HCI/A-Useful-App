@@ -1,0 +1,27 @@
+.song-container {
+  width: 30.6vw;
+  height: 93.6vh;
+  padding: 1rem;
+}
+
+.cell:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.cell {
+  height: 10vh;
+}
+
+.cell img{
+  display: block;
+  float: left;
+  /* width: 100%; */
+  height: 80%;
+}
+
+.cell .name{
+  margin-left: 10px;
+  margin-top: 10px;
+  float:left;
+  font-size: 16px;
+}

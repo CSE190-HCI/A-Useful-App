@@ -1,9 +1,9 @@
 import React from "react";
 
-import FeatureCard from "./FeatureCard";
 import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
-import { ResultsList, ResultsItem, TotalBar } from "./ResultsList";
+import { ResultsList } from "./ResultsList";
+import RecomSongs from "./RecomSongs";
 import InfoBox from "./InfoBox";
 
 import "../styles/Dashboard.css";
@@ -13,6 +13,7 @@ import {
     createSongFeaturesObject,
     returnResultsItems,
     calculateBaselines,
+    extractFeaturesSync
 } from "../utils/functions.js";
 
 import { get } from "../utils/api";
@@ -45,20 +46,32 @@ class Dashboard extends React.Component {
             targetAcc: {},
 
             infoMessage: "",
+
+            // switch between FeatureCards and RecomSongs
+            displayCards: "block",
+            displaySongs: "none",
+            active: "CARDS",
+            // update this from backend recommendations
+            recomSongIds: [],
+            recomSongs: [],
+            refreshSongs: false,
         };
 
         this.cancel = "";
     }
+
+    songCat = {
+        energy: [],
+        instrumentalness: [],
+        positivity: [],
+    };
 
     buckets = {
         energy: [
             // { energy: 0.85, instrumentalness: 0.45, positivity: 0.75 }
         ],
         instrumentalness: [],
-        positivity: [
-            // { energy: 0.64, instrumentalness: 0.79, positivity: 0.15 },
-            // { energy: 0.26, instrumentalness: 0.45, positivity: 0.36 },
-        ],
+        positivity: [],
     };
 
     /* 
@@ -69,6 +82,16 @@ class Dashboard extends React.Component {
         buckets[bucket].push(songFeaturesObject);
     };
 
+    addToCats = (songId, toBucketName) => {
+        this.songCat[toBucketName].push(songId);
+        // console.log(this.songCat);
+    };
+
+    removeFromCats = (songId, fromBucketName) => {
+        const index = this.songCat[fromBucketName].indexOf(songId);
+        this.songCat[fromBucketName].splice(index, 1);
+        // console.log(this.songCat);
+    };
     /* 
         A function to add a songFeaturesObject to the right bucket of the
         underlying buckets model.
@@ -98,6 +121,7 @@ class Dashboard extends React.Component {
             songId,
             this.state.cancel
         ).then((res) => {
+            // console.log(res);
             this.setState({ loading: false });
             return res;
         });
@@ -109,9 +133,11 @@ class Dashboard extends React.Component {
                 this.buckets,
                 fromBucketName
             );
+            this.removeFromCats(songId, fromBucketName);
         }
         if (toBucketName !== "selected") {
             this.addToBuckets(songFeatureObj, this.buckets, toBucketName);
+            this.addToCats(songId, toBucketName);
         }
         this.setState({ targetAcc: calculateBaselines(this.buckets) });
         const songSuggestion = {};
@@ -156,9 +182,9 @@ class Dashboard extends React.Component {
     };
 
     checkSearch = () => {
-        console.log(
-            `PreventSearchDisappear is now ${this.state.preventSearchDisappear}`
-        );
+        // console.log(
+        //     `PreventSearchDisappear is now ${this.state.preventSearchDisappear}`
+        // );
     };
 
     // TODO: maybe delete this if don't need it
@@ -168,6 +194,10 @@ class Dashboard extends React.Component {
             this.setState({ searchAppear: false });
     };
 
+    /*
+        Called when user enters anything into the search bar, will call fetchSearchResults
+        to interact with spotify API
+    */
     handleOnInputChange = (e) => {
         const query = e.target.value;
         if (!query) {
@@ -178,7 +208,9 @@ class Dashboard extends React.Component {
             });
         }
     };
-
+    /*
+        Called to fetch search results from spotify API
+    */
     fetchSearchResults = (query) => {
         const searchUrl = `https://api.spotify.com/v1/search?query=${encodeURIComponent(
             query
@@ -194,7 +226,7 @@ class Dashboard extends React.Component {
             cancelToken: this.cancel.token,
         })
             .then((res) => {
-                console.log(res);
+                // console.log(res);
                 this.setState({
                     results: res,
                     loading: false,
@@ -211,9 +243,9 @@ class Dashboard extends React.Component {
     };
 
     printSongArtistID = () => {
-        console.log(
-            `this.state is now ${this.state.selectedSong}, ${this.state.selectedArtist}, ${this.state.songID}`
-        );
+        // console.log(
+        //     `this.state is now ${this.state.selectedSong}, ${this.state.selectedArtist}, ${this.state.songID}`
+        // );
     };
 
     handleSelect = (name, artist, ID) => {
@@ -230,14 +262,14 @@ class Dashboard extends React.Component {
     };
 
     handleMouseEnter = () => {
-        console.log("handleMouseEnter is called");
+        // console.log("handleMouseEnter is called");
         this.setState({
             preventSearchDisappear: true,
         });
     };
 
     handleMouseLeave = () => {
-        console.log("handleMouseLeave is called");
+        // console.log("handleMouseLeave is called");
         this.setState(
             {
                 preventSearchDisappear: false,
@@ -281,6 +313,79 @@ class Dashboard extends React.Component {
         }
     };
 
+    /*
+        Called to see the recommended songs and go back to feature cards
+    */
+    handleOnGoNBack = () => {
+        // console.log(this.state.resultsItems);
+        // displayCards, displaySongs
+        var displayCards = this.state.displayCards;
+        var displaySongs = this.state.displaySongs;
+        var newDisplayCards = displayCards === "block" ? "none" : "block";
+        var newDisplaySongs = displaySongs === "block" ? "none" : "block";
+
+        var active = this.state.active;
+        var newActive = active === "CARDS" ? "SONGS" : "CARDS";
+        this.setState({
+            active: newActive,
+            displayCards: newDisplayCards,
+            displaySongs: newDisplaySongs,
+        });
+        if (this.state.active === "SONGS") {
+            this.setState({
+                recomSongIds: [],
+                recomSongs: [],
+            });
+        }
+        // get song ids in three cats -> backend -> update recomsongids
+        if (this.state.active === "CARDS") {
+            fetch("/recommend_songs", {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+                body: JSON.stringify({ songCat: this.songCat }),
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    /* RES IS AN ARRAY OF FEATURES OF REC SONGS */
+                    for (const song of res) {
+                        this.setState({
+                            recomSongIds: this.state.recomSongIds.concat(
+                                song.id
+                            ),
+                        });
+                    }                    
+                })
+                .then(this.refreshRecomSongIds);
+        }
+    };
+
+    refreshRecomSongIds = () => {
+        var recomSongIds = this.state.recomSongIds;
+        var songId;
+        for (songId of recomSongIds) {
+            console.log(songId);
+            const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
+            const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
+            get(searchUrl).then((res) => {
+                get(getFeaturesUrl).then((features) => {        
+                    this.setState({
+                        recomSongs: [
+                            ...this.state.recomSongs,
+                            {
+                                image: res.album.images[0].url,
+                                name: res.name,
+                                url: res.href,
+                                ...extractFeaturesSync(features)
+                            },
+                        ],
+                        refreshSongs: true,
+                    });
+                })
+            });
+        }
+    };
     handleMouseEnterInfoMessage = (infoMessage) => {
         this.setState({
             infoMessage: infoMessage,
@@ -288,6 +393,8 @@ class Dashboard extends React.Component {
     };
 
     render() {
+        var active = this.state.active;
+        // console.log(this.state);
         return (
             <div>
                 <header className="App-header">
@@ -312,21 +419,32 @@ class Dashboard extends React.Component {
                     </div>
 
                     <div>
-                        <Dropzone
-                            selectedSong={this.state.selectedSong}
-                            selectedArtist={this.state.selectedArtist}
-                            songID={this.state.songID}
-                            isUpdate={this.state.isUpdate}
-                            update={this.updateResultsBars}
-                            infoFunction={this.handleMouseEnterInfoMessage}
-                        />
+                        <div style={{ display: this.state.displayCards }}>
+                            <Dropzone
+                                selectedSong={this.state.selectedSong}
+                                selectedArtist={this.state.selectedArtist}
+                                songID={this.state.songID}
+                                isUpdate={this.state.isUpdate}
+                                update={this.updateResultsBars}
+                                infoFunction={this.handleMouseEnterInfoMessage}
+                            />
+                        </div>
+
+                        {active !== "CARDS" && (
+                            <RecomSongs
+                                recomSongs={this.state.recomSongs}
+                                refreshSongs={this.state.refreshSongs}
+                                handleMouseEnter={this.handleMouseEnterTestRecSong}
+                                handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                            />
+                        )}
                     </div>
 
                     <div className="results">
                         <p>Results</p>
                         <ResultsList items={this.state.resultsItems} />
 
-                        <TestRecSongItem
+                        {/* <TestRecSongItem
                             songName="Perfect"
                             artist="Ed Sheeran"
                             energy="0.6"
@@ -352,7 +470,15 @@ class Dashboard extends React.Component {
                             positivity="0.1"
                             handleMouseEnter={this.handleMouseEnterTestRecSong}
                             handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                        />
+                        /> */}
+                        <button type="button" onClick={this.handleOnGoNBack}>
+                            {active === "CARDS" ? (
+                                <div>Go</div>
+                            ) : active === "SONGS" ? (
+                                <div>Back</div>
+                            ) : null}
+                        </button>
+
                         <InfoBox infoMessage={this.state.infoMessage}></InfoBox>
                     </div>
                 </header>

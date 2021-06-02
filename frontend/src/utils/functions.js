@@ -80,16 +80,24 @@ const calculateInstrumentalness = (audioFeatures) => {
     return average;
 };
 const calculatePositivity = (audioFeatures) => {
-    console.log("calculatePositivity called");
+    // console.log("calculatePositivity called");
     const average =
         (audioFeatures.valence * 0.5 + audioFeatures.mode * 0.5) / 2;
     return average;
 };
 
+export const extractFeaturesSync = (audioFeatures) => {
+    return {
+        energy: calculateEnergy(audioFeatures),
+        instrumentalness: calculateInstrumentalness(audioFeatures),
+        positivity: calculatePositivity(audioFeatures),
+    };
+}
+
 const extractFeatures = (audioFeatures) => {
-    console.log("extract features called");
+    // console.log("extract features called");
     return new Promise((resolve) => {
-        console.log(`promise resolved`);
+        // console.log(`promise resolved`);
         resolve({
             energy: calculateEnergy(audioFeatures),
             instrumentalness: calculateInstrumentalness(audioFeatures),
@@ -125,7 +133,7 @@ export const createSongFeaturesObject = async (songId, cancel) => {
 };
 
 export const returnResultsItems = (featureRatios) => {
-    console.log(featureRatios);
+    // console.log(featureRatios);
     if (
         !featureRatios ||
         !featureRatios.energy ||
@@ -137,7 +145,7 @@ export const returnResultsItems = (featureRatios) => {
     )
         return <></>;
     return [
-        featureRatios.energy.baseWidth == "0%" ? (
+        featureRatios.energy.baseWidth === "0%" ? (
             <></>
         ) : (
             <ResultsItem
@@ -145,7 +153,7 @@ export const returnResultsItems = (featureRatios) => {
                 bar={<TotalBar widths={featureRatios.energy} />}
             />
         ),
-        featureRatios.instrumentalness.baseWidth == "0%" ? (
+        featureRatios.instrumentalness.baseWidth === "0%" ? (
             <></>
         ) : (
             <ResultsItem
@@ -153,7 +161,7 @@ export const returnResultsItems = (featureRatios) => {
                 bar={<TotalBar widths={featureRatios.instrumentalness} />}
             />
         ),
-        featureRatios.positivity.baseWidth == "0%" ? (
+        featureRatios.positivity.baseWidth === "0%" ? (
             <></>
         ) : (
             <ResultsItem
@@ -187,16 +195,16 @@ export const calculateBaselines = (buckets) => {
 export const hasSongList = (list, song) => {
     if (!list || !song) return false;
     for (const listSong of list) {
-        if (listSong.songID == song.songID) return true;
+        if (listSong.songID === song.songID) return true;
     }
     return false;
 };
 
 export const hasSongComponentsList = (list, songID) => {
-    console.log(list);
+    // console.log(list);
     if (!list || !songID) return false;
     for (const component of list) {
-        if (component.props.songID == songID) return true;
+        if (component.props.songID === songID) return true;
     }
     return false;
 };
