@@ -13,7 +13,8 @@ import {
     createSongFeaturesObject,
     returnResultsItems,
     calculateBaselines,
-    extractFeaturesSync
+    extractFeaturesSync,
+    selectInfoMessage,
 } from "../utils/functions.js";
 
 import { get } from "../utils/api";
@@ -355,7 +356,7 @@ class Dashboard extends React.Component {
                                 song.id
                             ),
                         });
-                    }                    
+                    }
                 })
                 .then(this.refreshRecomSongIds);
         }
@@ -369,7 +370,7 @@ class Dashboard extends React.Component {
             const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
             const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
             get(searchUrl).then((res) => {
-                get(getFeaturesUrl).then((features) => {        
+                get(getFeaturesUrl).then((features) => {
                     this.setState({
                         recomSongs: [
                             ...this.state.recomSongs,
@@ -377,15 +378,23 @@ class Dashboard extends React.Component {
                                 image: res.album.images[0].url,
                                 name: res.name,
                                 url: res.href,
-                                ...extractFeaturesSync(features)
+                                ...extractFeaturesSync(features),
                             },
                         ],
                         refreshSongs: true,
                     });
-                })
+                });
             });
         }
     };
+    handleMouseEnterInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(e.target.className));
+    };
+
+    handleMouseLeaveInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(""));
+    };
+
     handleMouseEnterInfoMessage = (infoMessage) => {
         this.setState({
             infoMessage: infoMessage,
@@ -405,6 +414,8 @@ class Dashboard extends React.Component {
                             type="text"
                             placeholder="Search for a song..."
                             className="text-field"
+                            onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
+                            onMouseLeave={(e) => this.handleMouseLeaveInfo(e)}
                             onChange={this.handleOnInputChange}
                             onFocus={(e) => this.handleFocus(e)}
                             onBlur={(e) => this.handleBlur(e)}
@@ -434,8 +445,12 @@ class Dashboard extends React.Component {
                             <RecomSongs
                                 recomSongs={this.state.recomSongs}
                                 refreshSongs={this.state.refreshSongs}
-                                handleMouseEnter={this.handleMouseEnterTestRecSong}
-                                handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                                handleMouseEnter={
+                                    this.handleMouseEnterTestRecSong
+                                }
+                                handleMouseLeave={
+                                    this.handleMouseLeaveTestRecSong
+                                }
                             />
                         )}
                     </div>

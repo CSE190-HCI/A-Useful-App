@@ -92,7 +92,7 @@ export const extractFeaturesSync = (audioFeatures) => {
         instrumentalness: calculateInstrumentalness(audioFeatures),
         positivity: calculatePositivity(audioFeatures),
     };
-}
+};
 
 const extractFeatures = (audioFeatures) => {
     // console.log("extract features called");
@@ -213,14 +213,28 @@ export const selectInfoMessage = (containerName) => {
     let message = "Hover over something to get more info";
     switch (containerName) {
         case "decided-container1":
-            message = "energy tells how hype the song is";
+            message =
+                "Energy represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. Specific audio features that map to energy include loudness, tempo, danceability, dynamic range, perceived loudness, timbre, onset rate, and genereal entropy.";
             break;
         case "decided-container2":
-            message = "instrumentalness tells how many instruments there are";
+            message =
+                "Instrumentalness is a predicted measure of whether or not a song contains vocals. The greater the instrumentalness value is, the greater likelihood the track contains no vocal content.";
             break;
         case "decided-container3":
-            message = "positivity is how happy the song is";
+            message =
+                "Positivity describes the musical positiveness conveyed by a song. More positive songs will be more in a major key, and less positive songs will be more in a minor key.";
             break;
+        case "selected-container":
+            message =
+                "Click and drag selected songs into the desired feature bucket to start.";
+            break;
+        case "selected-songs-list":
+            message =
+                "Click and drag selected songs into the desired feature bucket to start.";
+            break;
+        case "text-field":
+            message =
+                "Search for songs you wish to start blending. Click on the desired song to send it to the 'Selected Songs' section.";
     }
     console.log(message);
     return message;

@@ -7,7 +7,11 @@ class InfoBox extends React.Component {
     }
 
     render() {
-        return <div className="info-box">{this.props.infoMessage}</div>;
+        return (
+            <div className="info-box">
+                <p>{this.props.infoMessage}</p>
+            </div>
+        );
     }
 }
 
