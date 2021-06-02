@@ -1,5 +1,5 @@
 import React from "react";
-
+import ReactLoading from 'react-loading';
 import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
 import { ResultsList } from "./ResultsList";
@@ -15,7 +15,7 @@ import {
     calculateBaselines,
     extractFeaturesSync
 } from "../utils/functions.js";
-
+import "../styles/RecomSongs.css";
 import { get } from "../utils/api";
 import axios from "axios";
 
@@ -55,6 +55,9 @@ class Dashboard extends React.Component {
             recomSongIds: [],
             recomSongs: [],
             refreshSongs: false,
+
+            //
+            isLoading: true
         };
 
         this.cancel = "";
@@ -335,6 +338,7 @@ class Dashboard extends React.Component {
             this.setState({
                 recomSongIds: [],
                 recomSongs: [],
+                isLoading: true
             });
         }
         // get song ids in three cats -> backend -> update recomsongids
@@ -381,11 +385,13 @@ class Dashboard extends React.Component {
                             },
                         ],
                         refreshSongs: true,
+                        isLoading: false
                     });
                 })
             });
         }
     };
+
     handleMouseEnterInfoMessage = (infoMessage) => {
         this.setState({
             infoMessage: infoMessage,
@@ -429,17 +435,21 @@ class Dashboard extends React.Component {
                                 infoFunction={this.handleMouseEnterInfoMessage}
                             />
                         </div>
-
-                        {active !== "CARDS" && (
-                            <RecomSongs
-                                recomSongs={this.state.recomSongs}
-                                refreshSongs={this.state.refreshSongs}
-                                handleMouseEnter={this.handleMouseEnterTestRecSong}
-                                handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                            />
-                        )}
+                            {active !== "CARDS" && (
+                            this.state.isLoading ? 
+                                (<div className="loading">
+                                    <ReactLoading type={"bars"} color={"grey"} />
+                                </div>
+                                ) : 
+                                (<RecomSongs
+                                    recomSongs={this.state.recomSongs}
+                                    refreshSongs={this.state.refreshSongs}
+                                    handleMouseEnter={this.handleMouseEnterTestRecSong}
+                                    handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                                />)
+                            )}
                     </div>
-
+                        
                     <div className="results">
                         <p>Results</p>
                         <ResultsList items={this.state.resultsItems} />
