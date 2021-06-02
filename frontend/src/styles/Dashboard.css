@@ -32,3 +32,17 @@
     background-color: #282c34;
     height: 93.6vh;
 }
+
+.button{
+  background-color: #1DB954;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  margin: 0 auto;
+  width: 50px;
+  text-align: center;
+  text-decoration: none;
+  line-height: 30px;
+  font-size: 20px;
+  cursor: pointer;
+}

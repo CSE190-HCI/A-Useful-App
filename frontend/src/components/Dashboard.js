@@ -454,14 +454,14 @@ class Dashboard extends React.Component {
                     <div className="results">
                         <p>Results</p>
                         <ResultsList items={this.state.resultsItems} />
-                        <button type="button" onClick={this.handleOnGoNBack}>
+                        <div className="button" onClick={this.handleOnGoNBack}>
                             {active === "CARDS" ? (
                                 <div>Go</div>
-                            ) : active === "SONGS" ? (
-                                <div>Back</div>
+                            ) : active === "SONGS" && this.state.isLoading === false? (
+                               <div>Back</div>
                             ) : null}
-                        </button>
-
+                        </div>
+                        
                         <InfoBox infoMessage={this.state.infoMessage}></InfoBox>
                     </div>
                 </header>
