@@ -1,6 +1,7 @@
 import React from 'react';
 import "../styles/TestRecSongItem.css";
 
+
 class TestRecSongItem extends React.Component {
     constructor(props) {
         super(props);
@@ -12,6 +13,7 @@ class TestRecSongItem extends React.Component {
             energy: this.props.energy,
             instrumentalness: this.props.instrumentalness,
             positivity: this.props.positivity,
+            url: this.props.url,
         };
     }
 
@@ -32,10 +34,14 @@ class TestRecSongItem extends React.Component {
         this.props.handleMouseLeave();
     }
 
+    directToSong = () => {
+        window.open(this.props.url);
+    }
+
     render() {
         return (
             <div className="test-rec-song-container"
-                onClick={this.handleSelect}
+                onClick={this.directToSong}
                 onMouseEnter={this.handleMouseEnter}
                 onMouseLeave={this.handleMouseLeave}
             >

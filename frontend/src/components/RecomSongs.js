@@ -24,6 +24,7 @@ class RecomSongs extends React.Component {
                             instrumentalness={item.instrumentalness}
                             positivity={item.positivity}
                             image={item.image}
+                            url={item.spotify_url}
                             handleMouseEnter={(features) => this.handleMouseEnter(features)}
                             handleMouseLeave={this.handleMouseLeave}
                         />
