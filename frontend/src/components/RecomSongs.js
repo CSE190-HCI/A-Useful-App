@@ -13,6 +13,7 @@ class RecomSongs extends React.Component {
     }
 
     render() {
+        console.log(this.props.recomSongs);
         return (
 				<div className="song-container">
 				 	{this.props.recomSongs.map((item,i) => 

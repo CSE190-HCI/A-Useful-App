@@ -357,34 +357,62 @@ class Dashboard extends React.Component {
                     for (const song of res) {
                         this.setState({
                             recomSongIds: this.state.recomSongIds.concat(
-                                song.id
+                                {id:song.id}
                             ),
                         });
-                    }                    
+                    }
                 })
                 .then(this.refreshRecomSongIds);
         }
     };
 
+    getIndex = (value, arr, prop) => {
+        for(var i = 0; i < arr.length; i++) {
+            if(arr[i][prop] === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     refreshRecomSongIds = () => {
         var recomSongIds = this.state.recomSongIds;
+        console.log(recomSongIds);              
+
+        var recomSongs = this.state.recomSongIds;
         var songId;
         for (songId of recomSongIds) {
-            console.log(songId);
-            const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
-            const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
+            const searchUrl = `https://api.spotify.com/v1/tracks/${songId.id}`;
+            const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId.id}`;
             get(searchUrl).then((res) => {
-                get(getFeaturesUrl).then((features) => {        
+                get(getFeaturesUrl).then((features) => {
+                    var idx = this.getIndex(res.id, recomSongs, "id");        
+                    // console.log(`index is ${idx}`);
+                    // console.log("----- before ----------");
+                    // console.log(recomSongs);
+                    // console.log("---------------");
+                    recomSongs[idx]["image"] = res.album.images[0].url;
+                    recomSongs[idx]["name"] = res.name;
+                    recomSongs[idx]["url"] = res.href;
+                    recomSongs[idx] = {
+                        ...recomSongs[idx],
+                        ...extractFeaturesSync(features),
+                    }
+                    // console.log("-----after----------");
+                    // console.log(recomSongs);
+                    // console.log("---------------");
+
                     this.setState({
-                        recomSongs: [
-                            ...this.state.recomSongs,
-                            {
-                                image: res.album.images[0].url,
-                                name: res.name,
-                                url: res.href,
-                                ...extractFeaturesSync(features)
-                            },
-                        ],
+                        recomSongs: recomSongs,
+                        // recomSongs: [
+                        //     ...this.state.recomSongs,
+                        //     {
+                        //         image: res.album.images[0].url,
+                        //         name: res.name,
+                        //         url: res.href,
+                        //         ...extractFeaturesSync(features)
+                        //     },
+                        // ],
                         refreshSongs: true,
                         isLoading: false
                     });
