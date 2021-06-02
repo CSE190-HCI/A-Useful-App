@@ -476,7 +476,15 @@ class Dashboard extends React.Component {
                                 infoFunction={this.handleMouseEnterInfoMessage}
                             />
                         </div>
-                            {active !== "CARDS" && (
+                        
+                            
+                    </div>
+                        
+                    <div className="results">
+                        <p>Results</p>
+                        <ResultsList items={this.state.resultsItems} />
+                        
+                        {active !== "CARDS" && (
                             this.state.isLoading ? 
                                 (<div className="loading">
                                     <ReactLoading type={"bars"} color={"grey"} />
@@ -489,11 +497,6 @@ class Dashboard extends React.Component {
                                     handleMouseLeave={this.handleMouseLeaveTestRecSong}
                                 />)
                             )}
-                    </div>
-                        
-                    <div className="results">
-                        <p>Results</p>
-                        <ResultsList items={this.state.resultsItems} />
                         <div className="button" onClick={this.handleOnGoNBack}>
                             {active === "CARDS" ? (
                                 <div>Go</div>
@@ -501,8 +504,10 @@ class Dashboard extends React.Component {
                                <div>Back</div>
                             ) : null}
                         </div>
+                        <div style={{ display: this.state.displayCards }}>
+                            <InfoBox infoMessage={this.state.infoMessage}></InfoBox>
+                        </div>
                         
-                        <InfoBox infoMessage={this.state.infoMessage}></InfoBox>
                     </div>
                 </header>
             </div>

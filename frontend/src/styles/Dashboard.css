@@ -28,6 +28,7 @@
 }
 
 .results {
+    margin: 0 auto;
     width: 33vw;
     background-color: #282c34;
     height: 93.6vh;
