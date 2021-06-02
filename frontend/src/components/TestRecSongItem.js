@@ -7,7 +7,7 @@ class TestRecSongItem extends React.Component {
         super(props);
 
         this.state = {
-            artist: this.props.artist,
+            artist: this.props.artists,
             songName: this.props.songName,
             image: this.props.image,
             energy: this.props.energy,
@@ -19,9 +19,9 @@ class TestRecSongItem extends React.Component {
 
     getFeaturesObject = () => {
         return {
-            energy: this.state.energy,
-            instrumentalness: this.state.instrumentalness,
-            positivity: this.state.positivity,
+            energy: this.props.energy,
+            instrumentalness: this.props.instrumentalness,
+            positivity: this.props.positivity,
         }
     }
 
@@ -45,7 +45,7 @@ class TestRecSongItem extends React.Component {
                 onMouseEnter={this.handleMouseEnter}
                 onMouseLeave={this.handleMouseLeave}
             >
-                <img src={this.state.image} />
+                <img src={this.props.image} alt="album cover"/>
                 <div className="labels">
                     <label className="song-name"> { this.props.songName } </label>
                     <label className="artist"> { this.props.artist } </label>

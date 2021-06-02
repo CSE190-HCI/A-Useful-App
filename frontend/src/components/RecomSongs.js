@@ -1,5 +1,4 @@
 import React from "react";
-import "../styles/RecomSongs.css";
 import { ResultsItem } from "./ResultsList";
 import TestRecSongItem from "./TestRecSongItem";
 
@@ -14,6 +13,7 @@ class RecomSongs extends React.Component {
     }
 
     render() {
+        console.log(this.props.recomSongs);
         return (
 				<div className="song-container">
 				 	{this.props.recomSongs.map((item,i) => 
