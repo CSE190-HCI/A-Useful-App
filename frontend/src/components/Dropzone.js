@@ -91,7 +91,6 @@ class Dropzone extends React.Component {
         }
 
         let id = e.dataTransfer.getData("id");
-        // console.log(this.state.list);
 
         let cloneTask = undefined;
 
