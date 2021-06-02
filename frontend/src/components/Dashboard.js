@@ -13,7 +13,8 @@ import {
     createSongFeaturesObject,
     returnResultsItems,
     calculateBaselines,
-    extractFeaturesSync
+    extractFeaturesSync,
+    selectInfoMessage,
 } from "../utils/functions.js";
 import "../styles/RecomSongs.css";
 import { get } from "../utils/api";
@@ -416,9 +417,16 @@ class Dashboard extends React.Component {
                         refreshSongs: true,
                         isLoading: false
                     });
-                })
+                });
             });
-        }
+        }        
+    };
+    handleMouseEnterInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(e.target.className));
+    };
+
+    handleMouseLeaveInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(""));
     };
 
     handleMouseEnterInfoMessage = (infoMessage) => {
@@ -441,6 +449,8 @@ class Dashboard extends React.Component {
                             type="text"
                             placeholder="Search for a song..."
                             className="text-field"
+                            onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
+                            onMouseLeave={(e) => this.handleMouseLeaveInfo(e)}
                             onChange={this.handleOnInputChange}
                             onFocus={(e) => this.handleFocus(e)}
                             onBlur={(e) => this.handleBlur(e)}
