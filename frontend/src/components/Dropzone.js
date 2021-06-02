@@ -91,7 +91,6 @@ class Dropzone extends React.Component {
         }
 
         let id = e.dataTransfer.getData("id");
-        // console.log(this.state.list);
 
         let cloneTask = undefined;
 
@@ -131,11 +130,13 @@ class Dropzone extends React.Component {
     };
 
     handleMouseEnterInfo = (e) => {
+        console.log(e.target.className);
         this.props.infoFunction(selectInfoMessage(e.target.className));
     };
 
     handleMouseLeaveInfo = (e) => {
-        console.log(e);
+        // console.log(e);
+        this.props.infoFunction(selectInfoMessage(""));
     };
 
     render() {
@@ -169,6 +170,8 @@ class Dropzone extends React.Component {
         return (
             <div style={{display: this.state.display}}>
                 <div
+                    onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
+                    onMouseLeave={(e) => this.handleMouseLeaveInfo(e)}
                     onDragOver={(e) => this.handleDragOver(e)}
                     onDrop={(e) =>
                         this.handleOnDrop(e, "selected", obj.selected)

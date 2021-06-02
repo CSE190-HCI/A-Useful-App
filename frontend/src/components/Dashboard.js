@@ -1,5 +1,5 @@
 import React from "react";
-
+import ReactLoading from 'react-loading';
 import TestRecSongItem from "./TestRecSongItem";
 import { SearchDisplayList, SearchDisplayItem } from "./SearchDisplayList";
 import { ResultsList } from "./ResultsList";
@@ -13,9 +13,10 @@ import {
     createSongFeaturesObject,
     returnResultsItems,
     calculateBaselines,
-    extractFeaturesSync
+    extractFeaturesSync,
+    selectInfoMessage,
 } from "../utils/functions.js";
-
+import "../styles/RecomSongs.css";
 import { get } from "../utils/api";
 import axios from "axios";
 
@@ -56,6 +57,8 @@ class Dashboard extends React.Component {
             recomSongs: [],
             refreshSongs: false,
 
+            //
+            isLoading: true,
             // search result appear or disappear
             open: true,
         };
@@ -87,13 +90,11 @@ class Dashboard extends React.Component {
 
     addToCats = (songId, toBucketName) => {
         this.songCat[toBucketName].push(songId);
-        // console.log(this.songCat);
     };
 
     removeFromCats = (songId, fromBucketName) => {
         const index = this.songCat[fromBucketName].indexOf(songId);
         this.songCat[fromBucketName].splice(index, 1);
-        // console.log(this.songCat);
     };
     /* 
         A function to add a songFeaturesObject to the right bucket of the
@@ -144,6 +145,8 @@ class Dashboard extends React.Component {
         }
         this.setState({ targetAcc: calculateBaselines(this.buckets) });
         const songSuggestion = {};
+        console.log(this.buckets);
+        console.log(this.state.targetAcc);
         const featureRatios = computeWidthsForFeatures(
             this.state.targetAcc,
             songSuggestion
@@ -156,6 +159,7 @@ class Dashboard extends React.Component {
     }
 
     handleMouseEnterTestRecSong = (recSongFeaturesObject) => {
+        console.log(recSongFeaturesObject);
         const featureRatios = computeWidthsForFeatures(
             this.state.targetAcc,
             recSongFeaturesObject
@@ -349,6 +353,7 @@ class Dashboard extends React.Component {
             this.setState({
                 recomSongIds: [],
                 recomSongs: [],
+                isLoading: true
             });
         }
         // get song ids in three cats -> backend -> update recomsongids
@@ -366,41 +371,61 @@ class Dashboard extends React.Component {
                     for (const song of res) {
                         this.setState({
                             recomSongIds: this.state.recomSongIds.concat(
-                                song.id
+                                {id:song.id}
                             ),
                         });
-                    }                    
+                    }
                 })
                 .then(this.refreshRecomSongIds);
         }
     };
 
+    getIndex = (value, arr, prop) => {
+        for(var i = 0; i < arr.length; i++) {
+            if(arr[i][prop] === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     refreshRecomSongIds = () => {
         var recomSongIds = this.state.recomSongIds;
+        var recomSongs = this.state.recomSongIds;
         var songId;
         for (songId of recomSongIds) {
-            console.log(songId);
-            const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
-            const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
+            const searchUrl = `https://api.spotify.com/v1/tracks/${songId.id}`;
+            const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId.id}`;
             get(searchUrl).then((res) => {
-                get(getFeaturesUrl).then((features) => {        
+                get(getFeaturesUrl).then((features) => {
+                    var idx = this.getIndex(res.id, recomSongs, "id");        
+                    recomSongs[idx]["image"] = res.album.images[0].url;
+                    recomSongs[idx]["name"] = res.name;
+                    recomSongs[idx]["url"] = res.href;
+                    recomSongs[idx]["spotify_url"] = res.external_urls.spotify;
+                    recomSongs[idx]["artist"] = res.artists[0].name;
+                    recomSongs[idx] = {
+                        ...recomSongs[idx],
+                        ...extractFeaturesSync(features),
+                    }
+                    
                     this.setState({
-                        recomSongs: [
-                            ...this.state.recomSongs,
-                            {
-                                image: res.album.images[0].url,
-                                name: res.name,
-                                url: res.href,
-                                spotify_url: res.external_urls.spotify,
-                                ...extractFeaturesSync(features)
-                            },
-                        ],
+                        recomSongs: recomSongs,
                         refreshSongs: true,
+                        isLoading: false
                     });
-                })
+                });
             });
-        }
+        }        
     };
+    handleMouseEnterInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(e.target.className));
+    };
+
+    handleMouseLeaveInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(""));
+    };
+
     handleMouseEnterInfoMessage = (infoMessage) => {
         this.setState({
             infoMessage: infoMessage,
@@ -413,6 +438,7 @@ class Dashboard extends React.Component {
         return (
             <div>
                 <header className="App-header">
+                <div style={{ display: this.state.displayCards }}>
                     <div className="search-songs">
                         <p>Search Songs</p>
                         {/* Input text field */}
@@ -420,6 +446,8 @@ class Dashboard extends React.Component {
                             type="text"
                             placeholder="Search for a song..."
                             className="text-field"
+                            onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
+                            onMouseLeave={(e) => this.handleMouseLeaveInfo(e)}
                             onChange={this.handleOnInputChange}
                             onFocus={(e) => this.handleFocus(e)}
                             onBlur={(e) => this.handleBlur(e)}
@@ -434,6 +462,8 @@ class Dashboard extends React.Component {
                         )}
                         </div>
                     </div>
+                </div>
+                    
 
                     <div>
                         <div style={{ display: this.state.displayCards }}>
@@ -446,56 +476,32 @@ class Dashboard extends React.Component {
                                 infoFunction={this.handleMouseEnterInfoMessage}
                             />
                         </div>
-
-                        {active !== "CARDS" && (
-                            <RecomSongs
-                                recomSongs={this.state.recomSongs}
-                                refreshSongs={this.state.refreshSongs}
-                                handleMouseEnter={this.handleMouseEnterTestRecSong}
-                                handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                            />
-                        )}
+                            {active !== "CARDS" && (
+                            this.state.isLoading ? 
+                                (<div className="loading">
+                                    <ReactLoading type={"bars"} color={"grey"} />
+                                </div>
+                                ) : 
+                                (<RecomSongs
+                                    recomSongs={this.state.recomSongs}
+                                    refreshSongs={this.state.refreshSongs}
+                                    handleMouseEnter={this.handleMouseEnterTestRecSong}
+                                    handleMouseLeave={this.handleMouseLeaveTestRecSong}
+                                />)
+                            )}
                     </div>
-
+                        
                     <div className="results">
                         <p>Results</p>
                         <ResultsList items={this.state.resultsItems} />
-
-                        {/* <TestRecSongItem
-                            songName="Perfect"
-                            artist="Ed Sheeran"
-                            energy="0.6"
-                            instrumentalness="0.2"
-                            positivity="0.7"
-                            handleMouseEnter={this.handleMouseEnterTestRecSong}
-                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                        />
-                        <TestRecSongItem
-                            songName="You Say Run"
-                            artist="Hayashi Yuuki"
-                            energy="0.9"
-                            instrumentalness="0.9"
-                            positivity="0.8"
-                            handleMouseEnter={this.handleMouseEnterTestRecSong}
-                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                        />
-                        <TestRecSongItem
-                            songName="YouSeeBIGGIRL/T:T"
-                            artist="Hiroyuki Sawano"
-                            energy="0.8"
-                            instrumentalness="0.9"
-                            positivity="0.1"
-                            handleMouseEnter={this.handleMouseEnterTestRecSong}
-                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                        /> */}
-                        <button type="button" onClick={this.handleOnGoNBack}>
+                        <div className="button" onClick={this.handleOnGoNBack}>
                             {active === "CARDS" ? (
                                 <div>Go</div>
-                            ) : active === "SONGS" ? (
-                                <div>Back</div>
+                            ) : active === "SONGS" && this.state.isLoading === false? (
+                               <div>Back</div>
                             ) : null}
-                        </button>
-
+                        </div>
+                        
                         <InfoBox infoMessage={this.state.infoMessage}></InfoBox>
                     </div>
                 </header>
