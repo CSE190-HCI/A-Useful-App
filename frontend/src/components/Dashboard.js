@@ -13,7 +13,8 @@ import {
     createSongFeaturesObject,
     returnResultsItems,
     calculateBaselines,
-    extractFeaturesSync
+    extractFeaturesSync,
+    selectInfoMessage,
 } from "../utils/functions.js";
 import "../styles/RecomSongs.css";
 import { get } from "../utils/api";
@@ -370,41 +371,59 @@ class Dashboard extends React.Component {
                     for (const song of res) {
                         this.setState({
                             recomSongIds: this.state.recomSongIds.concat(
-                                song.id
+                                {id:song.id}
                             ),
                         });
-                    }                    
+                    }
                 })
                 .then(this.refreshRecomSongIds);
         }
     };
 
+    getIndex = (value, arr, prop) => {
+        for(var i = 0; i < arr.length; i++) {
+            if(arr[i][prop] === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     refreshRecomSongIds = () => {
         var recomSongIds = this.state.recomSongIds;
+        var recomSongs = this.state.recomSongIds;
         var songId;
         for (songId of recomSongIds) {
-            console.log(songId);
-            const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
-            const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
+            const searchUrl = `https://api.spotify.com/v1/tracks/${songId.id}`;
+            const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId.id}`;
             get(searchUrl).then((res) => {
-                get(getFeaturesUrl).then((features) => {        
+                get(getFeaturesUrl).then((features) => {
+                    var idx = this.getIndex(res.id, recomSongs, "id");        
+                    recomSongs[idx]["image"] = res.album.images[0].url;
+                    recomSongs[idx]["name"] = res.name;
+                    recomSongs[idx]["url"] = res.href;
+                    recomSongs[idx]["spotify_url"] = res.external_urls.spotify;
+                    recomSongs[idx]["artist"] = res.artists[0].name;
+                    recomSongs[idx] = {
+                        ...recomSongs[idx],
+                        ...extractFeaturesSync(features),
+                    }
+                    
                     this.setState({
-                        recomSongs: [
-                            ...this.state.recomSongs,
-                            {
-                                image: res.album.images[0].url,
-                                name: res.name,
-                                url: res.href,
-                                spotify_url: res.external_urls.spotify,
-                                ...extractFeaturesSync(features)
-                            },
-                        ],
+                        recomSongs: recomSongs,
                         refreshSongs: true,
                         isLoading: false
                     });
-                })
+                });
             });
-        }
+        }        
+    };
+    handleMouseEnterInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(e.target.className));
+    };
+
+    handleMouseLeaveInfo = (e) => {
+        this.handleMouseEnterInfoMessage(selectInfoMessage(""));
     };
 
     handleMouseEnterInfoMessage = (infoMessage) => {
@@ -427,6 +446,8 @@ class Dashboard extends React.Component {
                             type="text"
                             placeholder="Search for a song..."
                             className="text-field"
+                            onMouseEnter={(e) => this.handleMouseEnterInfo(e)}
+                            onMouseLeave={(e) => this.handleMouseLeaveInfo(e)}
                             onChange={this.handleOnInputChange}
                             onFocus={(e) => this.handleFocus(e)}
                             onBlur={(e) => this.handleBlur(e)}
