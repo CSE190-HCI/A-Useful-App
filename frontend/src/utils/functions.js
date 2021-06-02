@@ -257,3 +257,18 @@ export const mapStatusToBucketName = (status) => {
     }
     return bucketName;
 };
+
+const euclideanDist = (a, targetAcc) => {
+    return Math.sqrt(
+        Math.pow(a.energy - targetAcc.energy, 2) +
+        Math.pow(a.instrumentalness - targetAcc.instrumentalness, 2) +
+        Math.pow(a.positivity - targetAcc.positivity, 2)
+    );
+}
+
+export const compare = (a, b, targetAcc) => {
+    const aEuclideanDist = euclideanDist(a, targetAcc);
+    const bEuclideanDist = euclideanDist(b, targetAcc);
+    console.log(aEuclideanDist, bEuclideanDist);
+    return aEuclideanDist - bEuclideanDist;
+}

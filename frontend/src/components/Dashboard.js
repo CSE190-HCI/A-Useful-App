@@ -15,6 +15,7 @@ import {
     calculateBaselines,
     extractFeaturesSync,
     selectInfoMessage,
+    compare
 } from "../utils/functions.js";
 import "../styles/RecomSongs.css";
 import { get } from "../utils/api";
@@ -390,6 +391,7 @@ class Dashboard extends React.Component {
     }
 
     refreshRecomSongIds = () => {
+        console.log(this.state.targetAcc);
         var recomSongIds = this.state.recomSongIds;
         var recomSongs = this.state.recomSongIds;
         var songId;
@@ -410,7 +412,7 @@ class Dashboard extends React.Component {
                     }
                     
                     this.setState({
-                        recomSongs: recomSongs,
+                        recomSongs: recomSongs.sort((a, b) => compare(a, b, this.state.targetAcc)),
                         refreshSongs: true,
                         isLoading: false
                     });
