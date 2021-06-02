@@ -23,6 +23,7 @@
 
 .test-rec-song-container:hover {
     background-color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
 }
 
 img {
@@ -37,6 +38,10 @@ img {
     flex-direction: column;
     justify-content: space-evenly;
     padding-left: 5%;
+}
+
+.labels label {
+    cursor: pointer;
 }
 
 .song-name {
