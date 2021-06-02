@@ -405,6 +405,7 @@ class Dashboard extends React.Component {
         return (
             <div>
                 <header className="App-header">
+                <div style={{ display: this.state.displayCards }}>
                     <div className="search-songs">
                         <p>Search Songs</p>
                         {/* Input text field */}
@@ -424,6 +425,8 @@ class Dashboard extends React.Component {
                             <></>
                         )}
                     </div>
+                </div>
+                    
 
                     <div>
                         <div style={{ display: this.state.displayCards }}>
