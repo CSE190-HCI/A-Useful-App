@@ -39,7 +39,7 @@ class TestRecSongItem extends React.Component {
                 onMouseEnter={this.handleMouseEnter}
                 onMouseLeave={this.handleMouseLeave}
             >
-                <img src={this.state.image} />
+                <img src={this.state.image} alt="album cover"/>
                 <div className="labels">
                     <label className="song-name"> { this.props.songName } </label>
                     <label className="artist"> { this.props.artist } </label>
