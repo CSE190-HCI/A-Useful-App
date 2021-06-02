@@ -55,6 +55,9 @@ class Dashboard extends React.Component {
             recomSongIds: [],
             recomSongs: [],
             refreshSongs: false,
+
+            // search result appear or disappear
+            open: true,
         };
 
         this.cancel = "";
@@ -279,6 +282,14 @@ class Dashboard extends React.Component {
         );
     };
 
+    // toggleDropdown() {
+    //     this.setState({ open: !this.state.open});
+    // }
+
+    // // handleClickOutside(){
+    // //     this.setState({open:false})
+    // // }
+
     renderSearchResults = () => {
         if (
             Object.keys(this.state.results).length &&
@@ -303,11 +314,14 @@ class Dashboard extends React.Component {
             });
 
             return (
-                <div className="results-container">
-                    <SearchDisplayList
+                <div className="results-container"
+                onBlur = {this.toggleDropdown}>
+                    {this.state.open && <SearchDisplayList
                         items={items}
                         style={this.state.searchStyle}
-                    />
+                        // handleBlur = {this.toggleDropdown}
+                        // handleFocus = {this.handleClickOutside}
+                    />}
                 </div>
             );
         }
@@ -377,6 +391,7 @@ class Dashboard extends React.Component {
                                 image: res.album.images[0].url,
                                 name: res.name,
                                 url: res.href,
+                                spotify_url: res.external_urls.spotify,
                                 ...extractFeaturesSync(features)
                             },
                         ],
@@ -411,11 +426,13 @@ class Dashboard extends React.Component {
                         />
 
                         {/* Search Result field */}
+                        <div>
                         {this.state.searchAppear ? (
                             this.renderSearchResults()
                         ) : (
                             <></>
                         )}
+                        </div>
                     </div>
 
                     <div>
