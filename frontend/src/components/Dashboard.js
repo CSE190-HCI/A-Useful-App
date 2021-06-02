@@ -378,8 +378,6 @@ class Dashboard extends React.Component {
 
     refreshRecomSongIds = () => {
         var recomSongIds = this.state.recomSongIds;
-        console.log(recomSongIds);              
-
         var recomSongs = this.state.recomSongIds;
         var songId;
         for (songId of recomSongIds) {
@@ -388,32 +386,16 @@ class Dashboard extends React.Component {
             get(searchUrl).then((res) => {
                 get(getFeaturesUrl).then((features) => {
                     var idx = this.getIndex(res.id, recomSongs, "id");        
-                    // console.log(`index is ${idx}`);
-                    // console.log("----- before ----------");
-                    // console.log(recomSongs);
-                    // console.log("---------------");
                     recomSongs[idx]["image"] = res.album.images[0].url;
                     recomSongs[idx]["name"] = res.name;
                     recomSongs[idx]["url"] = res.href;
+                    recomSongs[idx]["artist"] = res.artists[0].name;
                     recomSongs[idx] = {
                         ...recomSongs[idx],
                         ...extractFeaturesSync(features),
                     }
-                    // console.log("-----after----------");
-                    // console.log(recomSongs);
-                    // console.log("---------------");
-
                     this.setState({
                         recomSongs: recomSongs,
-                        // recomSongs: [
-                        //     ...this.state.recomSongs,
-                        //     {
-                        //         image: res.album.images[0].url,
-                        //         name: res.name,
-                        //         url: res.href,
-                        //         ...extractFeaturesSync(features)
-                        //     },
-                        // ],
                         refreshSongs: true,
                         isLoading: false
                     });
