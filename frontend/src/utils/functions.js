@@ -210,31 +210,31 @@ export const hasSongComponentsList = (list, songID) => {
 };
 
 export const selectInfoMessage = (containerName) => {
-    let message = "Hover over something to get more info";
+    let message = <p>Hover over something to get more info</p>;
     switch (containerName) {
         case "decided-container1":
             message =
-                "Energy represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. Specific audio features that map to energy include loudness, tempo, danceability, dynamic range, perceived loudness, timbre, onset rate, and genereal entropy.";
+                <p><h1>Energy</h1> represents a perceptual measure of <b>intensity</b> and <b>activity</b>. Typically, energetic tracks feel <b>fast</b>, <b>loud</b>, and <b>noisy</b>. Specific audio features that map to energy include loudness, tempo, danceability, dynamic range, perceived loudness, timbre, onset rate, and general entropy.</p>;
             break;
         case "decided-container2":
             message =
-                "Instrumentalness is a predicted measure of whether or not a song contains vocals. The greater the instrumentalness value is, the greater likelihood the track contains no vocal content.";
+                <p><h1>Instrumentalness</h1> is a predicted measure of whether or not a song <b>contains vocals</b>. The <i>greater</i> the instrumentalness value is, the greater likelihood the track contains <i>no vocal content</i>.</p>;
             break;
         case "decided-container3":
             message =
-                "Positivity describes the musical positiveness conveyed by a song. More positive songs will be more in a major key, and less positive songs will be more in a minor key.";
+                <p><h1>Positivity</h1> describes the <b>musical positiveness</b> conveyed by a song. More <i>positive</i> songs will be more in a <i>major</i> key, and <i>less positive</i> songs will be more in a <i>minor</i> key.</p>;
             break;
         case "selected-container":
             message =
-                "Click and drag selected songs into the desired feature bucket to start.";
+                <p><b>Click and drag</b> selected songs into the desired feature bucket to start.</p>;
             break;
         case "selected-songs-list":
             message =
-                "Click and drag selected songs into the desired feature bucket to start.";
+                <p><b>Click and drag</b> selected songs into the desired feature bucket to start.</p>;
             break;
         case "text-field":
             message =
-                "Search for songs you wish to start blending. Click on the desired song to send it to the 'Selected Songs' section.";
+                <p><b>Search</b> for songs you wish to start blending. <b>Click on</b> the desired song to send it to the 'Selected Songs' section.</p>;
     }
     console.log(message);
     return message;

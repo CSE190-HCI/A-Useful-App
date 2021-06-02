@@ -23,3 +23,8 @@
     margin-left: 20px;
     margin-right: 20px;
 }
+
+.info-box p h1 {
+    margin: 0px;
+    margin-bottom: 10px;
+}
