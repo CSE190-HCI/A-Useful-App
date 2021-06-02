@@ -34,7 +34,8 @@ class DragDropSongItem extends React.Component {
                         <label className="drag-song-name"> {this.props.name} </label>
                         <label className="drag-artist"> {this.props.artist} </label>
                     </div>
-                    {this.props.status === "selected" ? 
+                    {this.props.status === "selected"
+                        ? 
                         <div className="drag-song-delete-btn-container">
                             <button
                                 type="button"
@@ -43,8 +44,15 @@ class DragDropSongItem extends React.Component {
                                 onMouseOver={(e) => this.handleMouseOver(e)}>
                                 x
                             </button>
-                        </div> :
-                        <></>
+                        </div>
+                        :
+                        <div className="drag-song-delete-btn-container">
+                        <button
+                            type="button"
+                            className="drag-song-delete-btn">
+                            x
+                        </button>
+                    </div>
                     }
                 </div>
 			</div>

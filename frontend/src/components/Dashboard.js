@@ -85,13 +85,11 @@ class Dashboard extends React.Component {
 
     addToCats = (songId, toBucketName) => {
         this.songCat[toBucketName].push(songId);
-        // console.log(this.songCat);
     };
 
     removeFromCats = (songId, fromBucketName) => {
         const index = this.songCat[fromBucketName].indexOf(songId);
         this.songCat[fromBucketName].splice(index, 1);
-        // console.log(this.songCat);
     };
     /* 
         A function to add a songFeaturesObject to the right bucket of the
@@ -142,6 +140,8 @@ class Dashboard extends React.Component {
         }
         this.setState({ targetAcc: calculateBaselines(this.buckets) });
         const songSuggestion = {};
+        console.log(this.buckets);
+        console.log(this.state.targetAcc);
         const featureRatios = computeWidthsForFeatures(
             this.state.targetAcc,
             songSuggestion
@@ -154,6 +154,7 @@ class Dashboard extends React.Component {
     }
 
     handleMouseEnterTestRecSong = (recSongFeaturesObject) => {
+        console.log(recSongFeaturesObject);
         const featureRatios = computeWidthsForFeatures(
             this.state.targetAcc,
             recSongFeaturesObject
@@ -366,7 +367,6 @@ class Dashboard extends React.Component {
         var recomSongIds = this.state.recomSongIds;
         var songId;
         for (songId of recomSongIds) {
-            console.log(songId);
             const searchUrl = `https://api.spotify.com/v1/tracks/${songId}`;
             const getFeaturesUrl = `https://api.spotify.com/v1/audio-features/${songId}`;
             get(searchUrl).then((res) => {
@@ -377,6 +377,7 @@ class Dashboard extends React.Component {
                             {
                                 image: res.album.images[0].url,
                                 name: res.name,
+                                artist: res.artists[0].name,
                                 url: res.href,
                                 ...extractFeaturesSync(features),
                             },
@@ -385,7 +386,7 @@ class Dashboard extends React.Component {
                     });
                 });
             });
-        }
+        }        
     };
     handleMouseEnterInfo = (e) => {
         this.handleMouseEnterInfoMessage(selectInfoMessage(e.target.className));
@@ -458,34 +459,6 @@ class Dashboard extends React.Component {
                     <div className="results">
                         <p>Results</p>
                         <ResultsList items={this.state.resultsItems} />
-
-                        {/* <TestRecSongItem
-                            songName="Perfect"
-                            artist="Ed Sheeran"
-                            energy="0.6"
-                            instrumentalness="0.2"
-                            positivity="0.7"
-                            handleMouseEnter={this.handleMouseEnterTestRecSong}
-                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                        />
-                        <TestRecSongItem
-                            songName="You Say Run"
-                            artist="Hayashi Yuuki"
-                            energy="0.9"
-                            instrumentalness="0.9"
-                            positivity="0.8"
-                            handleMouseEnter={this.handleMouseEnterTestRecSong}
-                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                        />
-                        <TestRecSongItem
-                            songName="YouSeeBIGGIRL/T:T"
-                            artist="Hiroyuki Sawano"
-                            energy="0.8"
-                            instrumentalness="0.9"
-                            positivity="0.1"
-                            handleMouseEnter={this.handleMouseEnterTestRecSong}
-                            handleMouseLeave={this.handleMouseLeaveTestRecSong}
-                        /> */}
                         <button type="button" onClick={this.handleOnGoNBack}>
                             {active === "CARDS" ? (
                                 <div>Go</div>
